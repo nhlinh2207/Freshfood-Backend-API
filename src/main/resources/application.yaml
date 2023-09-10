@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        dialect: org.hibernate.dialect.MariaDB103Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/freshfoodBackend?createDatabaseIfNotExist=true&autoReconnect=true&userSSL=false&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: fireice22072001
+    #    url: jdbc:mariadb://ssa-db-container:3306/csignv2?createDatabaseIfNotExist=true&autoReconnect=true&userSSL=false&useUnicode=true&characterEncoding=utf-8
+    #    username: linh
+    #    password: linh2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+jwt:
+  secret: nguyenhoailinh22072001
