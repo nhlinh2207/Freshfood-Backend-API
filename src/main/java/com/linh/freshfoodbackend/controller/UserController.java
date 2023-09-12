@@ -5,6 +5,7 @@ import com.linh.freshfoodbackend.dto.request.CreateUserReq;
 import com.linh.freshfoodbackend.dto.request.LoginRequest;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
+import com.linh.freshfoodbackend.dto.response.user.UserProfile;
 import com.linh.freshfoodbackend.entity.User;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.IUserRepo;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
+@CrossOrigin
 @RequestMapping(path = "/user")
 @AllArgsConstructor
 @Slf4j
-@CrossOrigin
 public class UserController {
 
     private final AuthenticationManager authenticationManager;
@@ -66,6 +66,18 @@ public class UserController {
         }
     }
 
+    @GetMapping(path = "/profile")
+    public ResponseEntity<?> getProfile(){
+        log.info("Get current login user profile");
+         return ResponseEntity.ok(userService.getProfile());
+    }
+
+    @PutMapping(path = "/getProfile/update")
+    public ResponseEntity<?> updateProfile(@RequestBody UserProfile newProfile){
+        log.info("Update current login user profile");
+        return ResponseEntity.ok(userService.updateProfile(newProfile));
+    }
+
     private void authenticate(String email, String password) {
         log.info("Kiểm tra xác thực {}", email);
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -76,12 +88,13 @@ public class UserController {
         log.info("abc login");
         NullJwt nullJwt = NullJwt.builder()
                 .username(user.getUsername())
+                .fullName(user.getFullName())
                 .email(user.getEmail())
                 .token(access_token)
                 .avatar("avatar-s-11.jpg")
                 .role(this.roleToArrayList(role))
                 .build();
-        log.info(nullJwt.token);
+//        log.info(nullJwt.token);
         res.setData(nullJwt);
         return res;
     }
@@ -100,6 +113,7 @@ public class UserController {
     @Builder
     static public class NullJwt {
         private String username;
+        private String fullName;
         private String email;
         private String token;
         private String avatar;

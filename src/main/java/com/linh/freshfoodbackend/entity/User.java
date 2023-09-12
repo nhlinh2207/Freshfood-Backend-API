@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -59,8 +60,17 @@ public class User {
     )
     private Set<Role> roles;
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    List<Rank> ranks;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Address address;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private TokenDevice tokenDevice;
 
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "CreateTime")
