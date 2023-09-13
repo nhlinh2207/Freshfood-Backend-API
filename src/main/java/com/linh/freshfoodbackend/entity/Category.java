@@ -1,6 +1,7 @@
 package com.linh.freshfoodbackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.linh.freshfoodbackend.utils.enums.CategoryStaus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,7 +28,8 @@ public class Category {
     private String description;
 
     @Column(name = "Status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CategoryStaus status;
 
     @OneToMany(
             mappedBy = "category",

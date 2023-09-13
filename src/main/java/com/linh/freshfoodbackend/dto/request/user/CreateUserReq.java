@@ -1,4 +1,4 @@
-package com.linh.freshfoodbackend.dto.request;
+package com.linh.freshfoodbackend.dto.request.user;
 
 import lombok.*;
 

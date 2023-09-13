@@ -1,6 +1,6 @@
 package com.linh.freshfoodbackend.service;
 
-import com.linh.freshfoodbackend.dto.request.CreateUserReq;
+import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
 import com.linh.freshfoodbackend.entity.User;

@@ -1,8 +1,8 @@
 package com.linh.freshfoodbackend.controller;
 
 import com.linh.freshfoodbackend.config.jwt.JwtTokenUtils;
-import com.linh.freshfoodbackend.dto.request.CreateUserReq;
-import com.linh.freshfoodbackend.dto.request.LoginRequest;
+import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
+import com.linh.freshfoodbackend.dto.request.user.LoginRequest;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
