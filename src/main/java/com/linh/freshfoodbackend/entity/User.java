@@ -6,6 +6,7 @@ import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,15 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Address address;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    private List<Cart> carts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "staff")
+    private List<Cart> deliveryCart = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private TokenDevice tokenDevice;

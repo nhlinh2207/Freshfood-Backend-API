@@ -2,59 +2,44 @@ package com.linh.freshfoodbackend.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.linh.freshfoodbackend.utils.CustomDateSerializer;
-import com.linh.freshfoodbackend.utils.enums.AddressType;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "tbl_address")
+@Table(name = "tbl_cartItem")
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Address {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Integer id;
 
-    @Column(name = "Commune")
-    private String commune;
+    @ManyToOne
+    @JoinColumn(name = "ProductId")
+    private Product product;
 
-    @Column(name = "District")
-    private String district;
-
-    @Column(name = "CityId")
-    private Integer cityId;
-
-    @Column(name = "CCountryId")
-    private Integer countryId;
-
-    @Column(name = "FullAddress")
-    private String fullAddress;
-
-    @Column(name = "Type")
-    @Enumerated(EnumType.STRING)
-    private AddressType type;
-
-    @OneToOne
-    @JoinColumn(name = "UserId")
-    private User user;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "CartId")
     private Cart cart;
+
+    @Column(name = "Quantity")
+    private Integer quantity;
+
+    @Column(name = "TotalPrice")
+    private Integer totalPrice;
 
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "CreateTime")
     private Date createTime;
 
     @JsonSerialize(using = CustomDateSerializer.class)
-    @Column(name = "UpdateTime")
+    @Column(name = "updateTime")
     private Date updateTime;
-
 }

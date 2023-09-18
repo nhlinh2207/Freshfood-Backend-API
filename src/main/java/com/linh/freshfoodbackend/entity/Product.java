@@ -64,17 +64,17 @@ public class Product {
     @JoinColumn(name = "CategoryId")
     private Category category;
 
-//    @OneToMany(
-//            mappedBy = "product",
-//            cascade = CascadeType.ALL
-//    )
-//    List<CartItem> cartItems;
-//
-//    @OneToMany(
-//            mappedBy = "product",
-//            cascade = CascadeType.ALL
-//    )
-//    List<Rank> ranks;
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL
+    )
+    List<CartItem> cartItems;
+
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL
+    )
+    List<Rank> ranks;
 
     @Transient
     public String getPriceCurrency() {

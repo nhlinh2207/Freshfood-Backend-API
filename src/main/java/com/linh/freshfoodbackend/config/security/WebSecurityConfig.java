@@ -59,9 +59,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(
                         "/#"
-                        ,"/pages/authentication/login"
-                        ,"/api/authenticate/**"
-                        , "/authenticate/**"
                         , "/user/login"
                         , "/user/register"
                         , "/webjars/*"
@@ -74,6 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         , "/notification/token"
                         , "/notification/refresh-token"
                         , "/notification/test"
+                        , "/category/**"
+                        ,"/product/**"
                 ).permitAll() //Cho phép tất cả đều được truy cập vào các địa chỉ này
                 // all other requests need to be authenticated
                 .anyRequest().authenticated()
