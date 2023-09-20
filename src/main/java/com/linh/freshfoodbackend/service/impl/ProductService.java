@@ -129,4 +129,22 @@ public class ProductService implements IProductService {
             throw new UnSuccessException(e.getMessage());
         }
     }
+
+    @Override
+    public ResponseObject<List<ProductDto>> findByCategory(Integer categoryId) {
+        try{
+            ResponseObject<List<ProductDto>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Category category = categoryRepo.findById(categoryId).orElseThrow(
+                    () -> new UnSuccessException("Can not find category with id: "+categoryId)
+            );
+            List<ProductDto> data = productRepo.findByCategory(category).stream().map(
+                    ProductMapper::mapEntityToDto
+            ).collect(Collectors.toList());;
+            response.setData(data);
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
 }

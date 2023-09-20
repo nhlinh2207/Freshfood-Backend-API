@@ -52,7 +52,7 @@ public class CartService implements ICartService {
                     .status(OrderStatus.UNSENT)
                     .receiverEmail(req.getEmail())
                     .receiverName(req.getFullName())
-                    .receiverPhoneNumber(req.getPhone())
+                    .receiverPhoneNumber(req.getPhoneNumber())
                     .user(currentUser)
                     .build();
             deliveryAddress.setCart(cart);

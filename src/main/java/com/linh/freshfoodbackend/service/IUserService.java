@@ -1,5 +1,6 @@
 package com.linh.freshfoodbackend.service;
 
+import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
@@ -11,4 +12,6 @@ public interface IUserService {
     ResponseObject<UserProfile> getProfile();
     User getCurrentLoginUser();
     ResponseObject<String> updateProfile(UserProfile profile);
+    void createContact(CreateContactReq req, User currentUser);
+
 }

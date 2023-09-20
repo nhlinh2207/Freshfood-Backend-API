@@ -19,4 +19,6 @@ public interface IProductService {
 
     ResponseObject<String> delete(Integer id);
 
+    ResponseObject<List<ProductDto>> findByCategory(Integer categoryId);
+
 }

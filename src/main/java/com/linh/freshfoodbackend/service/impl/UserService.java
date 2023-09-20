@@ -1,5 +1,6 @@
 package com.linh.freshfoodbackend.service.impl;
 
+import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
@@ -16,11 +17,15 @@ import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +39,7 @@ public class UserService implements IUserService {
     private final IRoleRepo roleRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final IAddressRepo addressRepo;
+    private final JavaMailSender mailSender;
 
     @Override
     public ResponseObject<String> createUser(CreateUserReq req) {
@@ -131,6 +137,40 @@ public class UserService implements IUserService {
             addressRepo.saveAndFlush(address);
             response.setData("Success");
             return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    @Async("SCMExecutor")
+    public void createContact(CreateContactReq req, User currentUser) {
+        try{
+            System.out.println(req.getContent());
+            // Send mail
+            String fullName = currentUser == null ? req.getFullName() : currentUser.getFullName();
+            String email = currentUser == null ? req.getEmail() : currentUser.getEmail();
+            String content = req.getContent();
+
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true); //nếu dùng multipart thì tham số thứ 2 là true
+
+            //Gửi đến với tên linh
+            helper.setFrom(email, fullName);
+            helper.setTo("nguyenhoailinh2207@gmail.com");
+
+            String mimeSubject = email+" đã gửi lời nhắn";
+            String mimeContent = "<p><b>Tên: <b/><i>"+fullName+"</i></p>";
+            mimeContent += "<p><b>Email: </b><i>"+email+"</i></p>";
+            mimeContent += content;
+
+            helper.setSubject(mimeSubject);
+            //để cấu hình html , tham số thứ 2 là true
+            helper.setText(mimeContent, true);
+
+            mailSender.send(mimeMessage);
+            System.out.println("send xong");
         }catch (Exception e){
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());

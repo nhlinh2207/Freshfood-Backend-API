@@ -1,8 +1,6 @@
 package com.linh.freshfoodbackend.controller;
 
 import com.linh.freshfoodbackend.dto.ProductDto;
-import com.linh.freshfoodbackend.entity.Category;
-import com.linh.freshfoodbackend.repository.ICategoryRepo;
 import com.linh.freshfoodbackend.service.IProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final IProductService productService;
-    private final ICategoryRepo categoryRepo;
 
     @GetMapping(path = "/getAll")
     public ResponseEntity<?> getAll(
@@ -31,6 +28,12 @@ public class ProductController {
     public ResponseEntity<?> create(@RequestBody ProductDto request){
        return ResponseEntity.ok(productService.create(request));
     }
+
+    @GetMapping(path = "/findByCategory")
+    public ResponseEntity<?> findByCategory(@RequestParam(name = "categoryId") Integer categoryId){
+        return ResponseEntity.ok(productService.findByCategory(categoryId));
+    }
+
     @GetMapping(path = "/findById")
     public ResponseEntity<?> findById(@RequestParam(name = "id") Integer id){
         return ResponseEntity.ok(productService.findById(id));

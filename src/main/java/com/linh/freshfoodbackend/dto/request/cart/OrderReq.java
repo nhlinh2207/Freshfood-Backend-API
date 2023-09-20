@@ -13,7 +13,7 @@ public class OrderReq {
 
     private String fullName;
     private String email;
-    private String phone;
+    private String phoneNumber;
     private String fullAddress;
     private Integer countryId;
     private Integer cityId;

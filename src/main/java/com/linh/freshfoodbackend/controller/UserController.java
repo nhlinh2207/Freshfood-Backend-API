@@ -1,6 +1,7 @@
 package com.linh.freshfoodbackend.controller;
 
 import com.linh.freshfoodbackend.config.jwt.JwtTokenUtils;
+import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
 import com.linh.freshfoodbackend.dto.request.user.LoginRequest;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
@@ -118,5 +119,19 @@ public class UserController {
         private String token;
         private String avatar;
         private ArrayList <String> role;
+    }
+
+    @PostMapping(path = "/contact")
+    public ResponseEntity<?> createContact(@RequestBody CreateContactReq req){
+        try{
+            ResponseObject<String>response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User currentUser = userService.getCurrentLoginUser();
+            userService.createContact(req, currentUser);
+            response.setData("Success");
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            throw new UnSuccessException(e.getMessage());
+        }
+
     }
 }
