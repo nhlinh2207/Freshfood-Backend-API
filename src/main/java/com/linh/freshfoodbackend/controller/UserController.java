@@ -64,7 +64,6 @@ public class UserController {
             ArrayList<GrantedAuthority> role = new ArrayList<>(userDetails.getAuthorities());
             ResponseObject<?> res = subscriberNull(user, userDetails, access_token, role);
             // Update FCM Token
-            System.out.println(req.getFcmWebToken());
             tokenDeviceService.update(
                     TokenDeviceDto.builder().webToken(req.getFcmWebToken()).build(),
                     user

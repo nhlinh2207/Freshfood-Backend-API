@@ -13,5 +13,6 @@ public interface IUserService {
     User getCurrentLoginUser();
     ResponseObject<String> updateProfile(UserProfile profile);
     void createContact(CreateContactReq req, User currentUser);
+    User findByEmail(String email);
 
 }

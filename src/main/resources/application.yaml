@@ -35,3 +35,6 @@ spring:
 
 jwt:
   secret: nguyenhoailinh22072001
+
+app:
+  firebase-configuration-file: key-firebase.json

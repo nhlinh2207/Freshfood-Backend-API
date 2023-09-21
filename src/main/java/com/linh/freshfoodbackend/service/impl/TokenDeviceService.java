@@ -7,8 +7,8 @@ import com.linh.freshfoodbackend.entity.TokenDevice;
 import com.linh.freshfoodbackend.entity.User;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.ITokenDeviceRepo;
+import com.linh.freshfoodbackend.repository.IUserRepo;
 import com.linh.freshfoodbackend.service.ITokenDeviceService;
-import com.linh.freshfoodbackend.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class TokenDeviceService implements ITokenDeviceService {
 
     private final ITokenDeviceRepo tokenDeviceRepo;
-    private final IUserService userService;
+    private final IUserRepo userRepo;
 
     @Override
     public ResponseObject<String> update(TokenDeviceDto tokenDeviceDto, User currentUser) {
@@ -35,6 +35,17 @@ public class TokenDeviceService implements ITokenDeviceService {
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());
         }
+    }
+
+    @Override
+    public TokenDevice findByUser(User user) {
+        return tokenDeviceRepo.findByUser(user);
+    }
+
+    @Override
+    public TokenDevice findByAdminUser() {
+        User admin = userRepo.findByEmail("nguyenhoailinh2207@gmail.com");
+        return tokenDeviceRepo.findByUser(admin);
     }
 
     private String convertToken(String token){

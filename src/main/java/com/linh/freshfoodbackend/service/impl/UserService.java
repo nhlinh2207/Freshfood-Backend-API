@@ -1,6 +1,7 @@
 package com.linh.freshfoodbackend.service.impl;
 
 import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
+import com.linh.freshfoodbackend.dto.request.notification.PushNotificationRequest;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
@@ -13,6 +14,8 @@ import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.IAddressRepo;
 import com.linh.freshfoodbackend.repository.IRoleRepo;
 import com.linh.freshfoodbackend.repository.IUserRepo;
+import com.linh.freshfoodbackend.service.IFirebaseNotificationService;
+import com.linh.freshfoodbackend.service.ITokenDeviceService;
 import com.linh.freshfoodbackend.service.IUserService;
 import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.UserStatus;
@@ -27,6 +30,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +45,8 @@ public class UserService implements IUserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final IAddressRepo addressRepo;
     private final JavaMailSender mailSender;
+    private final IFirebaseNotificationService firebaseNotificationService;
+    private final ITokenDeviceService tokenDeviceService;
 
     @Override
     public ResponseObject<String> createUser(CreateUserReq req) {
@@ -82,7 +88,16 @@ public class UserService implements IUserService {
 
             newUser.setAddress(residentAddress);
             newUser.setTokenDevice(tokenDevice);
-            userRepo.save(newUser);
+            newUser = userRepo.saveAndFlush(newUser);
+
+            // Push notification
+            this.firebaseNotificationService.pushNotificationToWeb(PushNotificationRequest.builder()
+                    .title("Freshfood")
+                    .body(newUser.getEmail()+" đã đăng ký tài khoản tại tại Freshfood")
+                    .data("Data: " + newUser.getEmail())
+                    .topic("abc")
+                    .tokens(Collections.singletonList(tokenDeviceService.findByAdminUser().getWebToken()))
+                    .build());
 
             response.setData("Success");
             return response;
@@ -183,5 +198,10 @@ public class UserService implements IUserService {
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());
         }
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepo.findByEmail(email);
     }
 }
