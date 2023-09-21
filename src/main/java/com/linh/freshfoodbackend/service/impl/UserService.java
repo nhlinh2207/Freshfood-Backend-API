@@ -7,6 +7,7 @@ import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
 import com.linh.freshfoodbackend.entity.Address;
 import com.linh.freshfoodbackend.entity.Role;
+import com.linh.freshfoodbackend.entity.TokenDevice;
 import com.linh.freshfoodbackend.entity.User;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.IAddressRepo;
@@ -45,19 +46,9 @@ public class UserService implements IUserService {
     public ResponseObject<String> createUser(CreateUserReq req) {
         try{
             ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
-
             Set<Role> roles = new HashSet<>();
             Role role = roleRepo.findByName("USER");
             roles.add(role);
-
-            Address residentAddress = Address.builder()
-                    .countryId(req.getCountryId())
-                    .cityId(req.getCityId())
-                    .fullAddress(req.getFullAddress())
-                    .type(AddressType.RESIDENT)
-                    .createTime(new Date())
-                    .updateTime(new Date())
-                    .build();
 
             User newUser = User.builder()
                     .firstName(req.getFirstName())
@@ -72,8 +63,25 @@ public class UserService implements IUserService {
                     .createTime(new Date())
                     .updateTime(new Date())
                     .build();
-            residentAddress.setUser(newUser);
+
+            Address residentAddress = Address.builder()
+                    .countryId(req.getCountryId())
+                    .cityId(req.getCityId())
+                    .fullAddress(req.getFullAddress())
+                    .type(AddressType.RESIDENT)
+                    .user(newUser)
+                    .createTime(new Date())
+                    .updateTime(new Date())
+                    .build();
+
+            TokenDevice tokenDevice = TokenDevice.builder()
+                            .createTime(new Date())
+                            .updateTime(new Date())
+                            .user(newUser)
+                            .build();
+
             newUser.setAddress(residentAddress);
+            newUser.setTokenDevice(tokenDevice);
             userRepo.save(newUser);
 
             response.setData("Success");

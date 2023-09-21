@@ -1,6 +1,7 @@
 package com.linh.freshfoodbackend.controller;
 
 import com.linh.freshfoodbackend.config.jwt.JwtTokenUtils;
+import com.linh.freshfoodbackend.dto.TokenDeviceDto;
 import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
 import com.linh.freshfoodbackend.dto.request.user.LoginRequest;
@@ -10,6 +11,7 @@ import com.linh.freshfoodbackend.dto.response.user.UserProfile;
 import com.linh.freshfoodbackend.entity.User;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.IUserRepo;
+import com.linh.freshfoodbackend.service.ITokenDeviceService;
 import com.linh.freshfoodbackend.service.IUserService;
 import com.linh.freshfoodbackend.service.impl.CustomUserPrincipal;
 import com.linh.freshfoodbackend.service.impl.JwtUserDetailsService;
@@ -38,6 +40,7 @@ public class UserController {
     private final JwtTokenUtils jwtTokenUtil;
     private final JwtUserDetailsService jwtUserDetailsService;
     private final IUserService userService;
+    private final ITokenDeviceService tokenDeviceService;
     private final IUserRepo userRepo;
 
     @PostMapping(path = "/register")
@@ -60,6 +63,12 @@ public class UserController {
             final String access_token = jwtTokenUtil.generateToken(userDetails);
             ArrayList<GrantedAuthority> role = new ArrayList<>(userDetails.getAuthorities());
             ResponseObject<?> res = subscriberNull(user, userDetails, access_token, role);
+            // Update FCM Token
+            System.out.println(req.getFcmWebToken());
+            tokenDeviceService.update(
+                    TokenDeviceDto.builder().webToken(req.getFcmWebToken()).build(),
+                    user
+            );
             return ResponseEntity.ok(res);
         } catch (Exception e) {
             e.printStackTrace();
