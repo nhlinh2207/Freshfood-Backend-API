@@ -74,6 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         , "/category/**"
                         ,"/product/**"
                         , "/address/**"
+                        ,"/ws/**"
                 ).permitAll() //Cho phép tất cả đều được truy cập vào các địa chỉ này
                 // all other requests need to be authenticated
                 .anyRequest().authenticated()

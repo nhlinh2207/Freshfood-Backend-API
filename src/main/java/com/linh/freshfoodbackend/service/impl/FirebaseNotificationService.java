@@ -5,6 +5,7 @@ import com.linh.freshfoodbackend.dto.request.notification.PushNotificationReques
 import com.linh.freshfoodbackend.service.IFirebaseNotificationService;
 import com.linh.freshfoodbackend.utils.PushNotificationUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
@@ -14,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 public class FirebaseNotificationService implements IFirebaseNotificationService {
 
     @Override
+    @Async("SCMExecutor")
     public String pushNotificationToWeb(PushNotificationRequest pushNotification) {
         String message = "";
         try {
