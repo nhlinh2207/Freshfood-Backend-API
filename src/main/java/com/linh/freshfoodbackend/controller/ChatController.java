@@ -35,12 +35,12 @@ public class ChatController {
         return chatRoomService.save(chatRoom);
     }
 
-    @RequestMapping("/chatroom/{chatRoomId}")
-    public ModelAndView join(@PathVariable String chatRoomId, Principal principal) {
-        ModelAndView modelAndView = new ModelAndView("chatroom");
-        modelAndView.addObject("chatRoom", chatRoomService.findById(Integer.valueOf(chatRoomId)));
-        return modelAndView;
-    }
+//    @RequestMapping("/chatroom/{chatRoomId}")
+//    public ModelAndView join(@PathVariable String chatRoomId, Principal principal) {
+//        ModelAndView modelAndView = new ModelAndView("chatroom");
+//        modelAndView.addObject("chatRoom", chatRoomService.findById(Integer.valueOf(chatRoomId)));
+//        return modelAndView;
+//    }
 
     @SubscribeMapping("/connected.users")
     public List<ConnectedUser> listChatRoomConnectedUsersOnSubscribe(SimpMessageHeaderAccessor headerAccessor) throws JsonProcessingException {
@@ -52,6 +52,7 @@ public class ChatController {
     @MessageMapping("/old.messages")
     public void listOldMessagesFromUserOnSubscribe(Principal principal, SimpMessageHeaderAccessor headerAccessor) {
         String chatRoomId = headerAccessor.getSessionAttributes().get("chatRoomId").toString();
+        System.out.println("old message : "+principal.getName());
         chatRoomService.loadOldMessage(Integer.valueOf(chatRoomId), principal.getName());
     }
 

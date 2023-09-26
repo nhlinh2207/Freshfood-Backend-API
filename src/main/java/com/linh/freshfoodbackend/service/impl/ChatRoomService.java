@@ -2,12 +2,17 @@ package com.linh.freshfoodbackend.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.linh.freshfoodbackend.dto.response.ResponseObject;
+import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.entity.ChatMessage;
 import com.linh.freshfoodbackend.entity.ChatRoom;
 import com.linh.freshfoodbackend.entity.ConnectedUser;
+import com.linh.freshfoodbackend.entity.User;
+import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.IChatRoomRepo;
 import com.linh.freshfoodbackend.service.IChatMessageService;
 import com.linh.freshfoodbackend.service.IChatRoomService;
+import com.linh.freshfoodbackend.service.IUserService;
 import com.linh.freshfoodbackend.utils.Destination;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +31,7 @@ public class ChatRoomService implements IChatRoomService {
     private final IChatRoomRepo chatRoomRepo;
     private final SimpMessagingTemplate webSocketMessagingTemplate;
     private final IChatMessageService messageService;
+    private final IUserService userService;
 
     @Override
     public ChatRoom save(ChatRoom chatRoom) {
@@ -38,13 +44,29 @@ public class ChatRoomService implements IChatRoomService {
     }
 
     @Override
-    public ChatRoom findByUserId(Integer userId) {
-        return chatRoomRepo.findByUserId(userId);
+    public ResponseObject<ChatRoom> findByUser() {
+        try{
+            User currentUser = userService.getCurrentLoginUser();
+            ResponseObject<ChatRoom> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            response.setData(chatRoomRepo.findByUserId(currentUser.getId()));
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
     }
 
     @Override
-    public List<ChatRoom> findByAdminId(Integer adminId) {
-        return chatRoomRepo.findByAdminId(adminId);
+    public ResponseObject<List<ChatRoom>> findByAdmin() {
+        try{
+            User currentUser = userService.getCurrentLoginUser();
+            ResponseObject<List<ChatRoom>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            response.setData(chatRoomRepo.findByAdminId(currentUser.getId()));
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
     }
 
     @Override

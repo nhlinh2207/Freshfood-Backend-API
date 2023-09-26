@@ -13,13 +13,16 @@ import java.util.Objects;
 @Setter
 @Builder
 public class ConnectedUser {
+
+    private String socketId;
+
     private String username;
 
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date joinAt;
 
-    public ConnectedUser(String username){
-        this.username = username;
+    public ConnectedUser(String socketId){
+        this.socketId = socketId;
     }
 
     @Override

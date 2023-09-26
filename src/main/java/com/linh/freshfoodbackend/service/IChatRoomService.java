@@ -1,6 +1,7 @@
 package com.linh.freshfoodbackend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.entity.ChatMessage;
 import com.linh.freshfoodbackend.entity.ChatRoom;
 import com.linh.freshfoodbackend.entity.ConnectedUser;
@@ -11,8 +12,8 @@ public interface IChatRoomService {
 
     ChatRoom save(ChatRoom chatRoom);
     List<ChatRoom> findAll();
-    ChatRoom findByUserId(Integer userId);
-    List<ChatRoom> findByAdminId(Integer adminId);
+    ResponseObject<ChatRoom> findByUser();
+    ResponseObject<List<ChatRoom>> findByAdmin();
     ChatRoom findById(Integer id);
     ChatRoom join(Integer chatRoomId, ConnectedUser user);
     ChatRoom leave(Integer chatRoomId, ConnectedUser user) throws JsonProcessingException;
