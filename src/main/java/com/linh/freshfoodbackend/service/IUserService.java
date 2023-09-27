@@ -6,6 +6,8 @@ import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
 import com.linh.freshfoodbackend.entity.User;
 
+import java.util.List;
+
 public interface IUserService {
 
     ResponseObject<String> createUser(CreateUserReq req);
@@ -14,5 +16,5 @@ public interface IUserService {
     ResponseObject<String> updateProfile(UserProfile profile);
     void createContact(CreateContactReq req, User currentUser);
     User findByEmail(String email);
-
+    ResponseObject<List<UserProfile>> getAll();
 }

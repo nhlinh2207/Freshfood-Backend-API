@@ -1,5 +1,6 @@
 package com.linh.freshfoodbackend.service.impl;
 
+import com.linh.freshfoodbackend.dto.mapper.UserMapper;
 import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
 import com.linh.freshfoodbackend.dto.request.notification.PushNotificationRequest;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
@@ -30,10 +31,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -114,17 +113,7 @@ public class UserService implements IUserService {
             // Get current Login user
             User currentUser = this.getCurrentLoginUser();
             Address address = currentUser.getAddress();
-            UserProfile profile = UserProfile.builder()
-                    .firstName(currentUser.getFirstName())
-                    .lastName(currentUser.getLastName())
-                    .username(currentUser.getUsername())
-                    .email(currentUser.getEmail())
-                    .phoneNumber(currentUser.getPhoneNumber())
-                    .countryId(address.getCountryId())
-                    .cityId(address.getCityId())
-                    .fullAddress(address.getFullAddress())
-                    .build();
-            response.setData(profile);
+             response.setData(UserMapper.mapEntityToDto(currentUser, address));
             return response;
         }catch (Exception e){
             e.printStackTrace();
@@ -203,5 +192,20 @@ public class UserService implements IUserService {
     @Override
     public User findByEmail(String email) {
         return userRepo.findByEmail(email);
+    }
+
+    @Override
+    public ResponseObject<List<UserProfile>> getAll() {
+        try{
+            ResponseObject<List<UserProfile>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            List<UserProfile> data = userRepo.findAll().stream().map(
+                    u -> UserMapper.mapEntityToDto(u, u.getAddress())
+            ).collect(Collectors.toList());
+            response.setData(data);
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
     }
 }

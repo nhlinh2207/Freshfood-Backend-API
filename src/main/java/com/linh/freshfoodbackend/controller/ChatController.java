@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -63,6 +64,7 @@ public class ChatController {
         instantMessage.setFromUser(principal.getName());
         instantMessage.setSenderType(instantMessage.getSenderType());
         instantMessage.setChatRoomId(Integer.valueOf(chatRoomId));
+        instantMessage.setCreateTime(new Date());
         chatRoomService.sendPublicMessage(instantMessage);
     }
 

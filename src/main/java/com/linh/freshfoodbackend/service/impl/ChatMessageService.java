@@ -27,7 +27,7 @@ public class ChatMessageService implements IChatMessageService {
                     .fromUser(message.getFromUser())
                     .username(message.getFromUser())
                     .senderType(message.getSenderType())
-                    .createTime(new Date())
+                    .createTime(message.getCreateTime() == null ? new Date() : message.getCreateTime())
                     .build());
         } else {
             messageRepo.save(ChatMessage.builder()
