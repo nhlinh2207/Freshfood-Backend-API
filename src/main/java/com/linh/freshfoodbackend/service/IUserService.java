@@ -17,4 +17,6 @@ public interface IUserService {
     void createContact(CreateContactReq req, User currentUser);
     User findByEmail(String email);
     ResponseObject<List<UserProfile>> getAll();
+
+    User findById(Integer id);
 }

@@ -54,4 +54,9 @@ public class ChatMessageService implements IChatMessageService {
     public List<ChatMessage> findByChatRoomId(Integer chatRoomId) {
         return messageRepo.findByChatRoomId(chatRoomId);
     }
+
+    @Override
+    public String getLatestMessageByChatRoom(Integer chatRoomId) {
+        return messageRepo.getLatestMessage(chatRoomId);
+    }
 }

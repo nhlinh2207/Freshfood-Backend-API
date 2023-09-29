@@ -59,7 +59,7 @@ public class UserService implements IUserService {
                     .firstName(req.getFirstName())
                     .lastName(req.getLastName())
                     .email(req.getEmail())
-                    .username(req.getUsername())
+                    .username(req.getUsername() == null ? req.getFirstName()+" "+req.getLastName() : req.getUsername())
                     .password(bCryptPasswordEncoder.encode(req.getPassword()))
                     .phoneNumber(req.getPhoneNumber())
                     .isActive(true)
@@ -203,6 +203,18 @@ public class UserService implements IUserService {
             ).collect(Collectors.toList());
             response.setData(data);
             return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public User findById(Integer id) {
+        try{
+            return userRepo.findById(id).orElseThrow(
+                    () -> new UnSuccessException("Can not find User B Id : "+id)
+            );
         }catch (Exception e){
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());

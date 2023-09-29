@@ -8,4 +8,7 @@ public interface IRatingRepo extends JpaRepository<Rank, Integer> {
 
     @Procedure("GET_AVERAGE_RANK_VALUE_OF_PRODUCT")
     Float getAverageValueOfProduct(Integer productId);
+
+    @Procedure("GET_TOTAL_RANK")
+    Integer geTotalRank();
 }

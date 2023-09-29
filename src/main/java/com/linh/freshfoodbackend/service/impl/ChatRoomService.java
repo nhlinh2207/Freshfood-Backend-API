@@ -2,6 +2,7 @@ package com.linh.freshfoodbackend.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.linh.freshfoodbackend.dto.ChatRoomDto;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.entity.ChatMessage;
@@ -19,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -57,11 +58,21 @@ public class ChatRoomService implements IChatRoomService {
     }
 
     @Override
-    public ResponseObject<List<ChatRoom>> findByAdmin() {
+    public ResponseObject<List<ChatRoomDto>> findByAdmin() {
         try{
+            SimpleDateFormat smf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             User currentUser = userService.getCurrentLoginUser();
-            ResponseObject<List<ChatRoom>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
-            response.setData(chatRoomRepo.findByAdminId(currentUser.getId()));
+            ResponseObject<List<ChatRoomDto>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            response.setData(chatRoomRepo.findByAdminId(currentUser.getId()).stream().map(
+                    c -> ChatRoomDto.builder()
+                            .id((Integer)c.get("Id"))
+                            .adminId((Integer) c.get("AdminId"))
+                            .userId((Integer) c.get("UserId"))
+                            .username(userService.findById((Integer) c.get("UserId")).getUsername())
+                            .latestMessage(messageService.getLatestMessageByChatRoom((Integer) c.get("Id")))
+                            .latestTime(smf.format((Date)c.get("LatestTime")))
+                            .build()
+            ).collect(Collectors.toList()));
             return response;
         }catch (Exception e){
             e.printStackTrace();
@@ -111,6 +122,8 @@ public class ChatRoomService implements IChatRoomService {
         return chatRoom;
     }
 
+
+
     @Override
     public void sendPublicMessage(ChatMessage message) throws JsonProcessingException {
         webSocketMessagingTemplate.convertAndSend(
@@ -142,6 +155,14 @@ public class ChatRoomService implements IChatRoomService {
                 username,
                 Destination.oldMessages(chatRoomId+""),
                 oldMessages);
+    }
+
+    @Override
+    public void reloadAllChatRoom(String chatRoomId) {
+        webSocketMessagingTemplate.convertAndSend(
+                Destination.reloadChatRooms(),
+                chatRoomId
+        );
     }
 
     public void updateConnectedUsersViaWebSocket(ChatRoom chatRoom) throws JsonProcessingException {

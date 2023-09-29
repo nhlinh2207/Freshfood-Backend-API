@@ -53,7 +53,6 @@ public class ChatController {
     @MessageMapping("/old.messages")
     public void listOldMessagesFromUserOnSubscribe(Principal principal, SimpMessageHeaderAccessor headerAccessor) {
         String chatRoomId = headerAccessor.getSessionAttributes().get("chatRoomId").toString();
-        System.out.println("old message : "+principal.getName());
         chatRoomService.loadOldMessage(Integer.valueOf(chatRoomId), principal.getName());
     }
 
@@ -66,6 +65,9 @@ public class ChatController {
         instantMessage.setChatRoomId(Integer.valueOf(chatRoomId));
         instantMessage.setCreateTime(new Date());
         chatRoomService.sendPublicMessage(instantMessage);
+        if (instantMessage.getSenderType().equals("USER")){
+            chatRoomService.reloadAllChatRoom(chatRoomId);
+        }
     }
 
 }

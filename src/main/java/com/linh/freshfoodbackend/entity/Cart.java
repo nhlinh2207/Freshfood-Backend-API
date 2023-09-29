@@ -39,6 +39,9 @@ public class Cart {
     @Column(name = "PaymentType")
     private String paymentType;
 
+    @Column(name = "TotalPrice")
+    private Integer totalPrice;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "OrderTime")
     private Date orderTime;

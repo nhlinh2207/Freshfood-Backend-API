@@ -9,4 +9,6 @@ public interface IChatMessageService {
 
     void appendInstantMessageToConversations(ChatMessage message) throws JsonProcessingException;
     List<ChatMessage> findByChatRoomId(Integer chatRoomId);
+    String getLatestMessageByChatRoom(Integer chatRoomId);
+
 }

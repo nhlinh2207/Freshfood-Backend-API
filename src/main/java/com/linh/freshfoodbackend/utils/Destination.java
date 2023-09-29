@@ -13,6 +13,10 @@ public class Destination {
         return "/queue/" + chatRoomId + ".old.messages";
     }
 
+    public static String reloadChatRooms(){
+        return "/topic/all/chatrooms";
+    }
+
     public static String connectedUsers(String chatRoomId) {
         return "/topic/" + chatRoomId + ".connected.users";
     }
