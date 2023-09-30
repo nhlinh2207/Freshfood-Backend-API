@@ -6,10 +6,9 @@ import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.service.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping(path = "/cart")
@@ -23,5 +22,12 @@ public class CartController {
         return ResponseEntity.ok(cartService.createOrder(req));
     }
 
+
+    @GetMapping(path = "/findByUser")
+    public ResponseEntity<?> findByUser(@RequestParam(name = "page") Integer page,
+                                        @RequestParam(name = "fromOrderTime", required = false, defaultValue = "") String fromOrderTime,
+                                        @RequestParam(name = "toOrderTime", required = false, defaultValue = "") String toOrderTime){
+        return ResponseEntity.ok(cartService.findByUser(page, fromOrderTime, toOrderTime));
+    }
 
 }

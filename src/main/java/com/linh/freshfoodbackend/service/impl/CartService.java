@@ -1,8 +1,11 @@
 package com.linh.freshfoodbackend.service.impl;
 
+import com.linh.freshfoodbackend.dto.CartDto;
 import com.linh.freshfoodbackend.dto.ProductDto;
+import com.linh.freshfoodbackend.dto.mapper.CartMapper;
 import com.linh.freshfoodbackend.dto.request.cart.CartItemReq;
 import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
+import com.linh.freshfoodbackend.dto.response.PaginationResponse;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.entity.*;
@@ -13,12 +16,18 @@ import com.linh.freshfoodbackend.repository.ICartRepo;
 import com.linh.freshfoodbackend.repository.IProductRepo;
 import com.linh.freshfoodbackend.service.ICartService;
 import com.linh.freshfoodbackend.service.IUserService;
+import com.linh.freshfoodbackend.utils.PaginationCustom;
 import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.OrderStatus;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -72,6 +81,32 @@ public class CartService implements ICartService {
             }
 
             response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<PaginationResponse<Object>> findByUser(Integer page, String fromOrderTime, String toOrderTime) {
+        try{
+            SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date from = fromOrderTime.isEmpty() ? smf.parse("2020-01-01 00:00:00") : smf.parse(fromOrderTime+" 00:00:00");
+            Date to = toOrderTime.isEmpty() ? new Date() : smf.parse(toOrderTime+" 23:59:59");
+            Pageable pageable = PaginationCustom.createPaginationCustom(page, 10, "orderTime", "desc");
+            ResponseObject<PaginationResponse<Object>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User currentUser = userService.getCurrentLoginUser();
+            Page<Cart> cartPage = cartRepo.findByUser(currentUser, from, to, pageable);
+            List<CartDto> carts = cartPage.getContent().stream()
+                    .map(CartMapper::mapToCartDto).collect(Collectors.toList());
+            response.setData(PaginationResponse.builder()
+                    .currentPage(cartPage.getNumber())
+                    .size(cartPage.getSize())
+                    .totalItems(cartPage.getTotalElements())
+                    .totalPages(cartPage.getTotalPages())
+                    .data(carts)
+                    .build());
             return response;
         }catch (Exception e){
             e.printStackTrace();
