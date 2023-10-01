@@ -5,6 +5,7 @@ import com.linh.freshfoodbackend.entity.Cart;
 import com.linh.freshfoodbackend.entity.CartItem;
 
 import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
 
 public class CartMapper {
 
@@ -14,9 +15,14 @@ public class CartMapper {
                 .id(c.getId())
                 .productQuantity( c.getCartItems().stream().mapToInt(CartItem::getQuantity).sum())
                 .totalPrice(c.getTotalPrice())
+                .receiverName(c.getReceiverName())
+                .email(c.getReceiverEmail())
+                .phoneNumber(c.getReceiverPhoneNumber())
+                .address(c.getAddress().getFullAddress())
                 .status(c.getStatus().message)
                 .orderTime(smf.format(c.getOrderTime()))
                 .deliveryTime(c.getDeliveryTime() == null ? "" : smf.format(c.getDeliveryTime()))
+                .cartItems(c.getCartItems().stream().map(CartItemMapper::mapCartItemToDto).collect(Collectors.toList()))
                 .build();
     }
 }

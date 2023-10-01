@@ -30,4 +30,14 @@ public class CartController {
         return ResponseEntity.ok(cartService.findByUser(page, fromOrderTime, toOrderTime));
     }
 
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<?> delete(@RequestParam(name = "cartId") Integer cartId){
+        return ResponseEntity.ok(cartService.delete(cartId));
+    }
+
+    @GetMapping(path = "/findById")
+    public ResponseEntity<?> findById(@RequestParam(name = "cartId") Integer cartId){
+        return ResponseEntity.ok(cartService.findById(cartId));
+    }
+
 }

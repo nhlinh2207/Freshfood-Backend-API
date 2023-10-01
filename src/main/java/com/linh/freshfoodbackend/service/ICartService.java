@@ -12,4 +12,6 @@ public interface ICartService {
 
     ResponseObject<String> createOrder(OrderReq req);
     ResponseObject<PaginationResponse<Object>> findByUser(Integer page, String fromOrderTime, String toOrderTime);
+    ResponseObject<String> delete(Integer cartId);
+    ResponseObject<CartDto> findById(Integer cartId);
 }

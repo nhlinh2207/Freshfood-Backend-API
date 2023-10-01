@@ -113,4 +113,36 @@ public class CartService implements ICartService {
             throw new UnSuccessException(e.getMessage());
         }
     }
+
+    @Override
+    public ResponseObject<String> delete(Integer cartId) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Cart cart = cartRepo.findById(cartId).orElseThrow(
+                    () -> new UnSuccessException("Can not find cart bt id : "+cartId)
+            );
+            cart.setStatus(OrderStatus.DELETED);
+            cartRepo.saveAndFlush(cart);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<CartDto> findById(Integer cartId) {
+        try{
+            ResponseObject<CartDto> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Cart cart = cartRepo.findById(cartId).orElseThrow(
+                    () -> new UnSuccessException("Can not find cart bt id : "+cartId)
+            );
+            response.setData(CartMapper.mapToCartDto(cart));
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
 }
