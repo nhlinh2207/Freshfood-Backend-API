@@ -4,13 +4,11 @@ import com.linh.freshfoodbackend.dto.mapper.UserMapper;
 import com.linh.freshfoodbackend.dto.request.contact.CreateContactReq;
 import com.linh.freshfoodbackend.dto.request.notification.PushNotificationRequest;
 import com.linh.freshfoodbackend.dto.request.user.CreateUserReq;
+import com.linh.freshfoodbackend.dto.response.PaginationResponse;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
-import com.linh.freshfoodbackend.entity.Address;
-import com.linh.freshfoodbackend.entity.Role;
-import com.linh.freshfoodbackend.entity.TokenDevice;
-import com.linh.freshfoodbackend.entity.User;
+import com.linh.freshfoodbackend.entity.*;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.repository.IAddressRepo;
 import com.linh.freshfoodbackend.repository.IRoleRepo;
@@ -18,10 +16,13 @@ import com.linh.freshfoodbackend.repository.IUserRepo;
 import com.linh.freshfoodbackend.service.IFirebaseNotificationService;
 import com.linh.freshfoodbackend.service.ITokenDeviceService;
 import com.linh.freshfoodbackend.service.IUserService;
+import com.linh.freshfoodbackend.utils.PaginationCustom;
 import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -113,7 +114,7 @@ public class UserService implements IUserService {
             // Get current Login user
             User currentUser = this.getCurrentLoginUser();
             Address address = currentUser.getAddress();
-             response.setData(UserMapper.mapEntityToDto(currentUser, address));
+            response.setData(UserMapper.mapEntityToDto(currentUser, address));
             return response;
         }catch (Exception e){
             e.printStackTrace();
@@ -195,14 +196,25 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseObject<List<UserProfile>> getAll() {
+    public ResponseObject<PaginationResponse<Object>> getAll(Integer page, Integer size, String search, String sortBy, String sortDir, String type, String status) {
         try{
-            ResponseObject<List<UserProfile>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
-            List<UserProfile> data = userRepo.findAll().stream().map(
-                    u -> UserMapper.mapEntityToDto(u, u.getAddress())
+            ResponseObject<PaginationResponse<Object>> res = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Pageable pageable = PaginationCustom.createPaginationCustom(page, size, sortBy, sortDir);
+
+            UserStatus userStatus = UserStatus.getByCode(status);
+            Page<User> userPage = userRepo.getAll(search, type, userStatus, pageable);
+            List<UserProfile> productData = userPage.getContent().stream().map(
+                  u -> UserMapper.mapEntityToDto(u, u.getAddress())
             ).collect(Collectors.toList());
-            response.setData(data);
-            return response;
+            // Create response
+            res.setData(PaginationResponse.builder()
+                 .currentPage(userPage.getNumber())
+                 .size(userPage.getSize())
+                 .totalItems(userPage.getTotalElements())
+                 .totalPages(userPage.getTotalPages())
+                 .data(productData)
+                 .build());
+            return res;
         }catch (Exception e){
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());
@@ -215,6 +227,23 @@ public class UserService implements IUserService {
             return userRepo.findById(id).orElseThrow(
                     () -> new UnSuccessException("Can not find User B Id : "+id)
             );
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> delete(Integer id) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User user = userRepo.findById(id).orElseThrow(
+                    () -> new UnSuccessException("Can not find user by id: "+id)
+            );
+            user.setStatus(UserStatus.DELETED);
+            userRepo.saveAndFlush(user);
+            response.setData("Success");
+            return response;
         }catch (Exception e){
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());

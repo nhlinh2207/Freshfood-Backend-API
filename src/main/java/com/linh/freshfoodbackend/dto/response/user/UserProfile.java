@@ -17,5 +17,6 @@ public class UserProfile {
     private String phoneNumber;
     private Integer countryId;
     private Integer cityId;
+    private String status;
     private String fullAddress;
 }

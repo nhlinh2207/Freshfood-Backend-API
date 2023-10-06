@@ -16,6 +16,7 @@ public class UserMapper {
                 .phoneNumber(currentUser.getPhoneNumber())
                 .countryId(address.getCountryId())
                 .cityId(address.getCityId())
+                .status(currentUser.getStatus().message)
                 .fullAddress(address.getFullAddress())
                 .build();
     }

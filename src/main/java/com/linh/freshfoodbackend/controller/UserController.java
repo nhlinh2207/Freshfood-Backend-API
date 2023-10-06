@@ -144,8 +144,21 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping(path = "getAll")
-    public ResponseEntity<?> getAllUsers(){
-         return ResponseEntity.ok(userService.getAll());
+    @GetMapping(path = "/getAll")
+    public ResponseEntity<?> getAllUsers(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                         @RequestParam(name = "size", required = false, defaultValue = "16") Integer size,
+                                         @RequestParam(name = "search", required = false) String search,
+                                         @RequestParam(name = "status", required = false) String status,
+                                         @RequestParam(name = "sortBy", required = false, defaultValue = "createTime") String sortBy,
+                                         @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
+                                         @RequestParam(name = "type", required = false) String type){
+         return ResponseEntity.ok(userService.getAll(page, size, search, sortBy, sortDir, type, status));
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<?> delete(@RequestParam(name = "id") Integer id){
+        return ResponseEntity.ok(userService.delete(id));
     }
 }

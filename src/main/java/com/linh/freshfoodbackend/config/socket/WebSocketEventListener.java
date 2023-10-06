@@ -12,6 +12,7 @@ import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -23,21 +24,27 @@ public class WebSocketEventListener {
     @EventListener
     public void handleSessionConnected(SessionConnectEvent event){
         SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.wrap(event.getMessage());
-        String chatRoomId = accessor.getNativeHeader("chatRoomId").get(0);
-        String currentUserEmail = accessor.getNativeHeader("email").get(0);
-        accessor.getSessionAttributes().put("chatRoomId", chatRoomId);
-        accessor.getSessionAttributes().put("email", currentUserEmail);
-        ConnectedUser joiningUser = new ConnectedUser(event.getUser().getName(), currentUserEmail ,new Date());
-        chatRoomService.join(Integer.valueOf(chatRoomId), joiningUser);
+        List<String> chatRoomIdAttributes = accessor.getNativeHeader("chatRoomId");
+        if(chatRoomIdAttributes != null){
+            String chatRoomId = chatRoomIdAttributes.get(0);
+            String currentUserEmail = accessor.getNativeHeader("email").get(0);
+            accessor.getSessionAttributes().put("chatRoomId", chatRoomId);
+            accessor.getSessionAttributes().put("email", currentUserEmail);
+            ConnectedUser joiningUser = new ConnectedUser(event.getUser().getName(), currentUserEmail ,new Date());
+            chatRoomService.join(Integer.valueOf(chatRoomId), joiningUser);
+        }
     }
 
     @EventListener
     public void handleSessionDisconnected(SessionDisconnectEvent event) throws JsonProcessingException {
         SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
-        String chatRoomId = headers.getSessionAttributes().get("chatRoomId").toString();
-        String currentUserEmail = headers.getSessionAttributes().get("email").toString();
-        ConnectedUser leavingUser = new ConnectedUser(event.getUser().getName(), currentUserEmail ,new Date());
-        chatRoomService.leave(Integer.valueOf(chatRoomId), leavingUser);
+        Object chatRoomIdAttribute = headers.getSessionAttributes().get("chatRoomId");
+        if(chatRoomIdAttribute != null){
+            String chatRoomId = chatRoomIdAttribute.toString();
+            String currentUserEmail = headers.getSessionAttributes().get("email").toString();
+            ConnectedUser leavingUser = new ConnectedUser(event.getUser().getName(), currentUserEmail ,new Date());
+            chatRoomService.leave(Integer.valueOf(chatRoomId), leavingUser);
+        }
     }
 
 }

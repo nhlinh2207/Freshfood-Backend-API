@@ -61,9 +61,11 @@ public class CartService implements ICartService {
                     .status(OrderStatus.UNSENT)
                     .receiverEmail(req.getEmail())
                     .receiverName(req.getFullName())
+                    .totalPrice(req.getCartItems().stream().mapToInt(CartItemReq::getSum).sum())
                     .receiverPhoneNumber(req.getPhoneNumber())
                     .user(currentUser)
                     .build();
+
             deliveryAddress.setCart(cart);
             cart = cartRepo.saveAndFlush(cart);
 
