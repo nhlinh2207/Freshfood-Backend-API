@@ -19,6 +19,7 @@ import com.linh.freshfoodbackend.service.IUserService;
 import com.linh.freshfoodbackend.utils.PaginationCustom;
 import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.OrderStatus;
+import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -141,6 +142,33 @@ public class CartService implements ICartService {
                     () -> new UnSuccessException("Can not find cart bt id : "+cartId)
             );
             response.setData(CartMapper.mapToCartDto(cart));
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<PaginationResponse<Object>> findAll(Integer page, String fromOrderTime, String toOrderTime, String status) {
+        try{
+            SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date from = fromOrderTime.isEmpty() ? smf.parse("2020-01-01 00:00:00") : smf.parse(fromOrderTime+" 00:00:00");
+            Date to = toOrderTime.isEmpty() ? new Date() : smf.parse(toOrderTime+" 23:59:59");
+            Pageable pageable = PaginationCustom.createPaginationCustom(page, 10, "orderTime", "desc");
+            ResponseObject<PaginationResponse<Object>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            OrderStatus orderStatus = OrderStatus.getByCode(status);
+            Page<Cart> cartPage = cartRepo.findAll(from, to, orderStatus, pageable);
+
+            List<CartDto> carts = cartPage.getContent().stream()
+                    .map(CartMapper::mapToCartDto).collect(Collectors.toList());
+            response.setData(PaginationResponse.builder()
+                    .currentPage(cartPage.getNumber())
+                    .size(cartPage.getSize())
+                    .totalItems(cartPage.getTotalElements())
+                    .totalPages(cartPage.getTotalPages())
+                    .data(carts)
+                    .build());
             return response;
         }catch (Exception e){
             e.printStackTrace();

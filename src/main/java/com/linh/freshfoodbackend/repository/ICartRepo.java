@@ -2,6 +2,7 @@ package com.linh.freshfoodbackend.repository;
 
 import com.linh.freshfoodbackend.entity.Cart;
 import com.linh.freshfoodbackend.entity.User;
+import com.linh.freshfoodbackend.utils.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,13 @@ public interface ICartRepo extends JpaRepository<Cart, Integer> {
                           @Param("fromOrderTime") Date fromOrderTime,
                           @Param("toOrderTime")Date toOrderTime,
                           Pageable pageable);
+
+    @Query("SELECT c FROM Cart c WHERE c.orderTime >= :fromOrderTime " +
+            "AND c.orderTime <= :toOrderTime " +
+            "AND (:status IS NULL OR c.status = :status)")
+    Page<Cart> findAll(@Param("fromOrderTime") Date fromOrderTime,
+                       @Param("toOrderTime")Date toOrderTime,
+                       @Param("status") OrderStatus status,
+                       Pageable pageable);
+
 }
