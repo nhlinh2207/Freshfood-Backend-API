@@ -1,7 +1,6 @@
 package com.linh.freshfoodbackend.service.impl;
 
 import com.linh.freshfoodbackend.dto.CartDto;
-import com.linh.freshfoodbackend.dto.ProductDto;
 import com.linh.freshfoodbackend.dto.mapper.CartMapper;
 import com.linh.freshfoodbackend.dto.request.cart.CartItemReq;
 import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
@@ -10,7 +9,6 @@ import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.entity.*;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
-import com.linh.freshfoodbackend.repository.IAddressRepo;
 import com.linh.freshfoodbackend.repository.ICartItemRepo;
 import com.linh.freshfoodbackend.repository.ICartRepo;
 import com.linh.freshfoodbackend.repository.IProductRepo;
@@ -19,7 +17,6 @@ import com.linh.freshfoodbackend.service.IUserService;
 import com.linh.freshfoodbackend.utils.PaginationCustom;
 import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.OrderStatus;
-import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
