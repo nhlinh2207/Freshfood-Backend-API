@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ public class ZaloPayController {
         zalopay_Params.put("amount", amount);
         zalopay_Params.put("description", "Thanh toan don hang #" + order_id);
         zalopay_Params.put("bankcode", "");
-        String item = "[{\"itemid\":\"knb\",\"itemname\":\"kim nguyen bao\",\"itemprice\":198400,\"itemquantity\":1}]";
+        String item = "[{\"id\":2,\"name\":\"Cam My\",\"qty\":3,\"sum\":45000}]";
         zalopay_Params.put("item", item);
 
         // embeddata
@@ -93,6 +94,19 @@ public class ZaloPayController {
         kq.put("orderurl", result.get("orderurl"));
         kq.put("returncode", result.get("returncode"));
         kq.put("zptranstoken", result.get("zptranstoken"));
+
+        String text = "Các ký tự UTF-8 như ã, â, ơ, ô";
+
+        // Loại bỏ dấu diacritic
+        String normalizedText = Normalizer.normalize(text, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        // Loại bỏ các ký tự không phải chữ cái
+        String nonAccentText = normalizedText.replaceAll("[^\\p{Alpha}]+", "");
+
+        // In ra kết quả
+        System.out.println(nonAccentText);
+
         return kq;
     }
 

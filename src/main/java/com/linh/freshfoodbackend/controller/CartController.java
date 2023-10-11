@@ -22,6 +22,10 @@ public class CartController {
         return ResponseEntity.ok(cartService.createOrder(req));
     }
 
+    @PostMapping(path = "/zaloPay/create")
+    public ResponseEntity<?> createZaloPay(@RequestBody OrderReq req){
+        return ResponseEntity.ok(cartService.createZaloPay(req));
+    }
 
     @GetMapping(path = "/findByUser")
     public ResponseEntity<?> findByUser(@RequestParam(name = "page") Integer page,

@@ -3,6 +3,7 @@ package com.linh.freshfoodbackend.entity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.linh.freshfoodbackend.utils.CustomDateSerializer;
 import com.linh.freshfoodbackend.utils.enums.OrderStatus;
+import com.linh.freshfoodbackend.utils.enums.PaymentType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,11 +37,19 @@ public class Cart {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name = "PaymentType")
-    private String paymentType;
-
     @Column(name = "TotalPrice")
     private Integer totalPrice;
+
+    @Column(name = "PaymentType")
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
+    @Column(name = "IsPaid")
+    private Boolean isPaid;
+
+    @JsonSerialize(using = CustomDateSerializer.class)
+    @Column(name = "PaymentTime")
+    private Date paymentTime;
 
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "OrderTime")
