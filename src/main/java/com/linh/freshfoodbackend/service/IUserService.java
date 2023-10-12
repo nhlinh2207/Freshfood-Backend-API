@@ -6,6 +6,7 @@ import com.linh.freshfoodbackend.dto.response.PaginationResponse;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.user.UserProfile;
 import com.linh.freshfoodbackend.entity.User;
+import org.json.simple.JSONObject;
 
 import java.util.List;
 
@@ -20,5 +21,6 @@ public interface IUserService {
     ResponseObject<PaginationResponse<Object>> getAll(Integer page, Integer size, String search, String sortBy, String sortDir, String type, String status);
     User findById(Integer id);
     ResponseObject<String> delete(Integer id);
+    ResponseObject<String> changeCurrentPassword(JSONObject req);
 
 }

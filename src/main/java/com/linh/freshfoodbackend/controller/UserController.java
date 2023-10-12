@@ -20,6 +20,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+
 
 @RestController
 @CrossOrigin
@@ -78,7 +80,7 @@ public class UserController {
 
     @GetMapping(path = "/profile")
     public ResponseEntity<?> getProfile(){
-        log.info("Get current login user profile");
+         log.info("Get current login user profile");
          return ResponseEntity.ok(userService.getProfile());
     }
 
@@ -160,5 +162,10 @@ public class UserController {
     @DeleteMapping(path = "/delete")
     public ResponseEntity<?> delete(@RequestParam(name = "id") Integer id){
         return ResponseEntity.ok(userService.delete(id));
+    }
+
+    @PutMapping(path = "/changeCurrentPassword")
+    public ResponseEntity<?> changeCurrentPassword(@RequestBody JSONObject request){
+        return ResponseEntity.ok(userService.changeCurrentPassword(request));
     }
 }

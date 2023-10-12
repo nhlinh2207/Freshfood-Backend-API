@@ -21,6 +21,7 @@ import com.linh.freshfoodbackend.utils.enums.AddressType;
 import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -29,6 +30,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
@@ -47,6 +49,7 @@ public class UserService implements IUserService {
     private final JavaMailSender mailSender;
     private final IFirebaseNotificationService firebaseNotificationService;
     private final ITokenDeviceService tokenDeviceService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseObject<String> createUser(CreateUserReq req) {
@@ -242,6 +245,24 @@ public class UserService implements IUserService {
             );
             user.setStatus(UserStatus.DELETED);
             userRepo.saveAndFlush(user);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> changeCurrentPassword(JSONObject req) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User currentUser = getCurrentLoginUser();
+            if (!passwordEncoder.matches(req.get("oldPassword").toString(), currentUser.getPassword())){
+                throw new UnSuccessException("Password cũ không chính xác");
+            }
+            currentUser.setPassword(passwordEncoder.encode(req.get("password").toString()));
+            userRepo.saveAndFlush(currentUser);
             response.setData("Success");
             return response;
         }catch (Exception e){
