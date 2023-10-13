@@ -47,6 +47,12 @@ public class Cart {
     @Column(name = "IsPaid")
     private Boolean isPaid;
 
+    @Column(name = "IsDelivered")
+    private Boolean isDelivered;
+
+    @Column(name = "IsReceived")
+    private Boolean isReceived;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "PaymentTime")
     private Date paymentTime;

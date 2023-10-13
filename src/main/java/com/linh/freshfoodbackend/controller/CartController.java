@@ -6,6 +6,7 @@ import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.service.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -52,4 +53,20 @@ public class CartController {
         return ResponseEntity.ok(cartService.findById(cartId));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/assignToStaff")
+    public ResponseEntity<?> assignToStaff(@RequestParam(name = "cartId") Integer cartId, @RequestParam(name = "staffId") Integer staffId){
+        return ResponseEntity.ok(cartService.assignToStaff(cartId, staffId));
+    }
+
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping(path = "/delivery")
+    public ResponseEntity<?> deliveryCart(@RequestParam(name = "cartId") Integer cartId){
+        return ResponseEntity.ok(cartService.delete(cartId));
+    }
+
+    @GetMapping(path = "/receive")
+    public ResponseEntity<?> receiveCart(@RequestParam(name = "cartId") Integer cartId){
+        return ResponseEntity.ok(cartService.receiveCart(cartId));
+    }
 }

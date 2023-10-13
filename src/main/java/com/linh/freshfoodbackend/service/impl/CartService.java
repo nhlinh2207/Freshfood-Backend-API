@@ -298,6 +298,59 @@ public class CartService implements ICartService {
             kq.put("returncode", result.get("returncode"));
             kq.put("zptranstoken", result.get("zptranstoken"));
             response.setData(kq.get("orderurl").toString());
+            System.out.println(kq);
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> assignToStaff(Integer cartId, Integer staffId) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Cart cart = cartRepo.findById(cartId).orElseThrow(
+                    () -> new UnSuccessException("Can not find cart with id : "+cartId)
+            );
+            User staff = userService.findById(staffId);
+            cart.setStaff(staff);
+            cartRepo.saveAndFlush(cart);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> deliveryCart(Integer cartId) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Cart cart = cartRepo.findById(cartId).orElseThrow(
+                    () -> new UnSuccessException("Can not find cart with id : "+cartId)
+            );
+            cart.setIsDelivered(true);
+            cartRepo.saveAndFlush(cart);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> receiveCart(Integer cartId) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Cart cart = cartRepo.findById(cartId).orElseThrow(
+                    () -> new UnSuccessException("Can not find cart with id : "+cartId)
+            );
+            cart.setIsReceived(true);
+            cartRepo.saveAndFlush(cart);
+            response.setData("Success");
             return response;
         }catch (Exception e){
             e.printStackTrace();

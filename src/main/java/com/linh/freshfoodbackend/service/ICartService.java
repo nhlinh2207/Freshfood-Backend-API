@@ -14,4 +14,7 @@ public interface ICartService {
     ResponseObject<CartDto> findById(Integer cartId);
     ResponseObject<PaginationResponse<Object>> findAll(Integer page, String fromOrderTime, String toOrderTime, String type);
     ResponseObject<String>  createZaloPay(OrderReq req);
+    ResponseObject<String> assignToStaff(Integer cartId, Integer staffId);
+    ResponseObject<String> deliveryCart(Integer cartId);
+    ResponseObject<String> receiveCart(Integer cartId);
 }
