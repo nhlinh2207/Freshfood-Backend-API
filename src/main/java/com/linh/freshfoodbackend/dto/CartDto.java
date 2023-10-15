@@ -20,5 +20,9 @@ public class CartDto {
     private String address;
     private String orderTime;
     private String deliveryTime;
+    private Integer staffId;
     private List<CartItemDto> cartItems;
+    private Boolean isDelivered;
+    private Boolean isReceived;
+    private Boolean isPaid;
 }

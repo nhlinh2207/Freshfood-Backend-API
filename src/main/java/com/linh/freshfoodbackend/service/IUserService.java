@@ -22,5 +22,5 @@ public interface IUserService {
     User findById(Integer id);
     ResponseObject<String> delete(Integer id);
     ResponseObject<String> changeCurrentPassword(JSONObject req);
-
+    ResponseObject<List<JSONObject>> getStaff();
 }

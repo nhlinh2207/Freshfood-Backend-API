@@ -168,4 +168,10 @@ public class UserController {
     public ResponseEntity<?> changeCurrentPassword(@RequestBody JSONObject request){
         return ResponseEntity.ok(userService.changeCurrentPassword(request));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/getStaff")
+    public ResponseEntity<?> getStaff(){
+        return ResponseEntity.ok(userService.getStaff());
+    }
 }

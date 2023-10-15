@@ -4,7 +4,9 @@ public enum OrderStatus {
     UNSENT("UNSENT", "Chưa giao"),
     PENDING("PENDING",  "Đang giao"),
     RATING("RATING",  "Chờ đánh giá"),
-    COMPLETE("COMPLETE", "Đã giao"),
+    DELIVERED("DELIVERED", "Đã giao"),
+    RECEIVED("DELIVERED", "Đã nhận"),
+    COMPLETE("COMPLETE", "Hoàn thành"),
     DELETED("DELETED", "Đã hủy");
 
     public String code;

@@ -270,4 +270,28 @@ public class UserService implements IUserService {
             throw new UnSuccessException(e.getMessage());
         }
     }
+
+    @Override
+    public ResponseObject<List<JSONObject>> getStaff() {
+        try{
+            ResponseObject<List<JSONObject>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Role staffRole = roleRepo.findByName("STAFF");
+            List<User> staffs = userRepo.findAll().stream().filter(
+                    u -> u.getRoles().contains(staffRole)
+            ).collect(Collectors.toList());
+            List<JSONObject> data = staffs.stream().map(
+                    s -> {
+                        JSONObject j = new JSONObject();
+                        j.put("id", s.getId());
+                        j.put("name", s.getFirstName()+" "+s.getLastName());
+                        return j;
+                    }
+            ).collect(Collectors.toList());
+            response.setData(data);
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
 }

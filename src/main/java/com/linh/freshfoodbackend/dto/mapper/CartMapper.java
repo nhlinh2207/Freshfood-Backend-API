@@ -20,8 +20,12 @@ public class CartMapper {
                 .phoneNumber(c.getReceiverPhoneNumber())
                 .address(c.getAddress().getFullAddress())
                 .status(c.getStatus().message)
+                .staffId(c.getStaff() == null ? 0 : c.getStaff().getId())
                 .orderTime(smf.format(c.getOrderTime()))
                 .deliveryTime(c.getDeliveryTime() == null ? "" : smf.format(c.getDeliveryTime()))
+                .isDelivered(c.getIsDelivered())
+                .isPaid(c.getIsPaid())
+                .isReceived(c.getIsReceived())
                 .cartItems(c.getCartItems().stream().map(CartItemMapper::mapCartItemToDto).collect(Collectors.toList()))
                 .build();
     }

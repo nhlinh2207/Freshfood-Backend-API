@@ -10,6 +10,7 @@ public interface ICartService {
 
     ResponseObject<String> createOrder(OrderReq req);
     ResponseObject<PaginationResponse<Object>> findByUser(Integer page, String fromOrderTime, String toOrderTime);
+    ResponseObject<PaginationResponse<Object>> findByStaff(Integer page, String fromOrderTime, String toOrderTime);
     ResponseObject<String> delete(Integer cartId);
     ResponseObject<CartDto> findById(Integer cartId);
     ResponseObject<PaginationResponse<Object>> findAll(Integer page, String fromOrderTime, String toOrderTime, String type);

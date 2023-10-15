@@ -133,6 +133,32 @@ public class CartService implements ICartService {
     }
 
     @Override
+    public ResponseObject<PaginationResponse<Object>> findByStaff(Integer page, String fromOrderTime, String toOrderTime) {
+        try{
+            SimpleDateFormat smf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date from = fromOrderTime.isEmpty() ? smf.parse("2020-01-01 00:00:00") : smf.parse(fromOrderTime+" 00:00:00");
+            Date to = toOrderTime.isEmpty() ? new Date() : smf.parse(toOrderTime+" 23:59:59");
+            Pageable pageable = PaginationCustom.createPaginationCustom(page, 10, "orderTime", "desc");
+            ResponseObject<PaginationResponse<Object>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User staff = userService.getCurrentLoginUser();
+            Page<Cart> cartPage = cartRepo.findByStaff(staff, from, to, pageable);
+            List<CartDto> carts = cartPage.getContent().stream()
+                    .map(CartMapper::mapToCartDto).collect(Collectors.toList());
+            response.setData(PaginationResponse.builder()
+                    .currentPage(cartPage.getNumber())
+                    .size(cartPage.getSize())
+                    .totalItems(cartPage.getTotalElements())
+                    .totalPages(cartPage.getTotalPages())
+                    .data(carts)
+                    .build());
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
     public ResponseObject<String> delete(Integer cartId) {
         try{
             ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
@@ -315,6 +341,7 @@ public class CartService implements ICartService {
             );
             User staff = userService.findById(staffId);
             cart.setStaff(staff);
+            cart.setStatus(OrderStatus.PENDING);
             cartRepo.saveAndFlush(cart);
             response.setData("Success");
             return response;
@@ -332,6 +359,8 @@ public class CartService implements ICartService {
                     () -> new UnSuccessException("Can not find cart with id : "+cartId)
             );
             cart.setIsDelivered(true);
+            cart.setDeliveryTime(new Date());
+            cart.setStatus(OrderStatus.DELIVERED);
             cartRepo.saveAndFlush(cart);
             response.setData("Success");
             return response;
@@ -349,6 +378,7 @@ public class CartService implements ICartService {
                     () -> new UnSuccessException("Can not find cart with id : "+cartId)
             );
             cart.setIsReceived(true);
+            cart.setStatus(OrderStatus.COMPLETE);
             cartRepo.saveAndFlush(cart);
             response.setData("Success");
             return response;

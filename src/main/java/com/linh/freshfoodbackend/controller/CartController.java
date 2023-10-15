@@ -35,6 +35,13 @@ public class CartController {
         return ResponseEntity.ok(cartService.findByUser(page, fromOrderTime, toOrderTime));
     }
 
+    @GetMapping(path = "/findByStaff")
+    public ResponseEntity<?> findByStaff(@RequestParam(name = "page") Integer page,
+                                        @RequestParam(name = "fromOrderTime", required = false, defaultValue = "") String fromOrderTime,
+                                        @RequestParam(name = "toOrderTime", required = false, defaultValue = "") String toOrderTime){
+        return ResponseEntity.ok(cartService.findByStaff(page, fromOrderTime, toOrderTime));
+    }
+
     @GetMapping(path = "/findAll")
     public ResponseEntity<?> findAll(@RequestParam(name = "page") Integer page,
                                      @RequestParam(name = "fromOrderTime", required = false, defaultValue = "") String fromOrderTime,
@@ -62,7 +69,7 @@ public class CartController {
     @PreAuthorize("hasRole('STAFF')")
     @GetMapping(path = "/delivery")
     public ResponseEntity<?> deliveryCart(@RequestParam(name = "cartId") Integer cartId){
-        return ResponseEntity.ok(cartService.delete(cartId));
+        return ResponseEntity.ok(cartService.deliveryCart(cartId));
     }
 
     @GetMapping(path = "/receive")

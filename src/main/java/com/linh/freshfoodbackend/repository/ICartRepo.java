@@ -31,6 +31,12 @@ public interface ICartRepo extends JpaRepository<Cart, Integer> {
                           @Param("toOrderTime")Date toOrderTime,
                           Pageable pageable);
 
+    @Query("SELECT c FROM Cart c WHERE c.staff = :user AND c.orderTime >= :fromOrderTime AND c.orderTime <= :toOrderTime")
+    Page<Cart> findByStaff(@Param("user") User user,
+                          @Param("fromOrderTime") Date fromOrderTime,
+                          @Param("toOrderTime")Date toOrderTime,
+                          Pageable pageable);
+
     @Query("SELECT c FROM Cart c WHERE c.orderTime >= :fromOrderTime " +
             "AND c.orderTime <= :toOrderTime " +
             "AND (:status IS NULL OR c.status = :status)")
