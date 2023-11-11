@@ -3,12 +3,14 @@ package com.linh.freshfoodbackend.controller;
 import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
+import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.service.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @RestController
@@ -75,5 +77,15 @@ public class CartController {
     @GetMapping(path = "/receive")
     public ResponseEntity<?> receiveCart(@RequestParam(name = "cartId") Integer cartId){
         return ResponseEntity.ok(cartService.receiveCart(cartId));
+    }
+
+    @GetMapping(path = "/export")
+    public void exportFile(@RequestParam(name = "cartId") Integer cartId, HttpServletResponse response){
+        try{
+            cartService.exportFile(cartId, response);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
     }
 }

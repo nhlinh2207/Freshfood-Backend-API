@@ -6,6 +6,8 @@ import com.linh.freshfoodbackend.dto.response.PaginationResponse;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import org.json.JSONObject;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface ICartService {
 
     ResponseObject<String> createOrder(OrderReq req);
@@ -18,4 +20,5 @@ public interface ICartService {
     ResponseObject<String> assignToStaff(Integer cartId, Integer staffId);
     ResponseObject<String> deliveryCart(Integer cartId);
     ResponseObject<String> receiveCart(Integer cartId);
+    void exportFile(Integer cartId, HttpServletResponse response);
 }
