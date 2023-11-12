@@ -3,7 +3,7 @@ package com.linh.freshfoodbackend.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linh.freshfoodbackend.config.payment.ZaloPayConfig;
 import com.linh.freshfoodbackend.dto.CartDto;
-import com.linh.freshfoodbackend.dto.TestDto;
+import com.linh.freshfoodbackend.dto.JasperDto;
 import com.linh.freshfoodbackend.dto.mapper.CartMapper;
 import com.linh.freshfoodbackend.dto.request.cart.CartItemReq;
 import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
@@ -421,8 +421,8 @@ public class CartService implements ICartService {
 //                    }
 //            ).collect(Collectors.toList());
 
-            List<TestDto> cartItems = cart.getCartItems().stream().map(
-                    c -> TestDto.builder()
+            List<JasperDto> cartItems = cart.getCartItems().stream().map(
+                    c -> JasperDto.builder()
                             .productName(c.getProduct().getName())
                             .productId(c.getProduct().getId())
                             .image(c.getProduct().getExtra_img1().replaceFirst("data:image/jpeg;base64,", ""))

@@ -7,8 +7,9 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestDto {
+public class JasperDto {
 
+//    Cart
     private Integer productId;
     private String productName;
     private String image;

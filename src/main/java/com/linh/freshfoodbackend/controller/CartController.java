@@ -80,9 +80,10 @@ public class CartController {
     }
 
     @GetMapping(path = "/export")
-    public void exportFile(@RequestParam(name = "cartId") Integer cartId, HttpServletResponse response){
+    public ResponseEntity<?> exportFile(@RequestParam(name = "cartId") Integer cartId, HttpServletResponse response){
         try{
             cartService.exportFile(cartId, response);
+            return ResponseEntity.ok("Success");
         }catch (Exception e){
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());
