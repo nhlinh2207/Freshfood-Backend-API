@@ -52,6 +52,9 @@ public class Product {
     @Column(name = "Status")
     private String status;
 
+    @Column(name = "Label")
+    private String label;
+
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "CreateTime")
     private Date createTime;
