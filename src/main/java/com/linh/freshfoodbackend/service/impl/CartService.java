@@ -281,10 +281,11 @@ public class CartService implements ICartService {
             zalopay_Params.put("appid", ZaloPayConfig.APP_ID);
             zalopay_Params.put("apptransid", DateTimeUtil.getCurrentTimeString("yyMMdd") + "_" + new Date().getTime());
             zalopay_Params.put("apptime", System.currentTimeMillis());
-            zalopay_Params.put("appuser", currentUser.getUsername() == null ? currentUser.getEmail() : currentUser.getUsername());
+            zalopay_Params.put("appuser", currentUser.getUsername() == null ? currentUser.getEmail() : Normalizer.normalize(currentUser.getUsername(), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", ""));
             zalopay_Params.put("amount", req.getCartItems().stream().mapToInt(CartItemReq::getSum).sum());
             zalopay_Params.put("description", "Thanh toan don hang #" + cart.getId());
             zalopay_Params.put("bankcode", "");
+            zalopay_Params.put("cartId", cart.getId());
             String item = objectMapper.writeValueAsString(req.getCartItems());;
             zalopay_Params.put("item", Normalizer.normalize(item, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", ""));
 
@@ -299,7 +300,7 @@ public class CartService implements ICartService {
             Map<String, String> embeddata = new HashMap<>();
             embeddata.put("merchantinfo", "FreshfoodShop");
             embeddata.put("promotioninfo", "");
-            embeddata.put("redirecturl", ZaloPayConfig.REDIRECT_URL);
+            embeddata.put("redirecturl", ZaloPayConfig.REDIRECT_URL+"?id="+cart.getId());
 
             Map<String, String> columninfo = new HashMap<String, String>();
             columninfo.put("store_name", "Freshfood");
