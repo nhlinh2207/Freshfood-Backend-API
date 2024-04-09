@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cartReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Error" uuid="ad6a3434-386e-49a5-ab97-b320dc442828">
 	<property name="ireport.zoom" value="1.8181818181818181"/>
 	<property name="ireport.x" value="24"/>
-	<property name="ireport.y" value="250"/>
+	<property name="ireport.y" value="124"/>
 	<parameter name="logo" class="java.lang.String"/>
 	<parameter name="cartId" class="java.lang.Integer"/>
 	<parameter name="name" class="java.lang.String"/>
@@ -286,7 +286,22 @@
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="75"/>
+		<band height="23">
+			<textField>
+				<reportElement x="160" y="7" width="113" height="16" uuid="b2beb3b9-cd47-42d5-9335-6c153753ced0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Trang  "+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="273" y="7" width="80" height="16" uuid="4038aaf2-811e-4543-841a-bd5dd6808363"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
 		<band/>

@@ -45,11 +45,21 @@ public class ChatRoomService implements IChatRoomService {
     }
 
     @Override
-    public ResponseObject<ChatRoom> findByUser() {
+    public ResponseObject<ChatRoomDto> findByUser() {
         try{
+            SimpleDateFormat smf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             User currentUser = userService.getCurrentLoginUser();
-            ResponseObject<ChatRoom> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
-            response.setData(chatRoomRepo.findByUserId(currentUser.getId()));
+            ResponseObject<ChatRoomDto> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            ChatRoom c = chatRoomRepo.findByUserId(currentUser.getId());
+            response.setData(
+                    ChatRoomDto.builder()
+                            .id(c.getId())
+                            .adminId(c.getAdminId())
+                            .userId(c.getUserId())
+                            .username(userService.findById(c.getUserId()).getUsername())
+                            .latestMessage(messageService.getLatestMessageByChatRoom((Integer) c.getId()))
+                            .build()
+            );
             return response;
         }catch (Exception e){
             e.printStackTrace();
@@ -63,6 +73,7 @@ public class ChatRoomService implements IChatRoomService {
             SimpleDateFormat smf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             User currentUser = userService.getCurrentLoginUser();
             ResponseObject<List<ChatRoomDto>> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+
             response.setData(chatRoomRepo.findByAdminId(currentUser.getId()).stream().map(
                     c -> ChatRoomDto.builder()
                             .id((Integer)c.get("Id"))

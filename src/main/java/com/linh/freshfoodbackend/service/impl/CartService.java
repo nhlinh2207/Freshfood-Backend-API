@@ -30,9 +30,11 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -110,7 +112,7 @@ public class CartService implements ICartService {
                         .build());
             }
 
-            response.setData("Success");
+            response.setData(cart.getId()+"");
             return response;
         }catch (Exception e){
             e.printStackTrace();
@@ -455,11 +457,21 @@ public class CartService implements ICartService {
             JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(cartItems);
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource);
 
-//            Export pdf
+//            // Export pdf
             JRPdfExporter exporter = new JRPdfExporter();
             exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
             exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
             exporter.exportReport();
+
+            // Export excel
+//            JRXlsxExporter exporter2 = new JRXlsxExporter();
+//            SimpleXlsxReportConfiguration reportConfigXLS = new SimpleXlsxReportConfiguration();
+//            reportConfigXLS.setDetectCellType(true);
+//            reportConfigXLS.setCollapseRowSpan(false);
+//            exporter2.setConfiguration(reportConfigXLS);
+//            exporter2.setExporterInput(new SimpleExporterInput(jasperPrint));
+//            exporter2.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+//            exporter2.exportReport();
 
         }catch (Exception e){
             e.printStackTrace();

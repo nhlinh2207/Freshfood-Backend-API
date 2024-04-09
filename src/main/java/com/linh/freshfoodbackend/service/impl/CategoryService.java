@@ -48,6 +48,7 @@ public class CategoryService implements ICategoryService {
                                     i -> CategoryDto.builder().id(i.getId())
                                             .name(i.getName())
                                             .description(i.getDescription())
+                                            .status(i.getStatus().getCode())
                                             .build()
                             ).collect(Collectors.toList());
             response.setData(data);
@@ -83,7 +84,27 @@ public class CategoryService implements ICategoryService {
             Category category = categoryRepo.findById(id).orElseThrow(
                     () -> new UnSuccessException("Can not find category by id: "+id)
             );
-            categoryRepo.deleteById(id);
+//            categoryRepo.deleteById(id);
+            category.setStatus(CategoryStaus.INACTIVE);
+            categoryRepo.saveAndFlush(category);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> restore(Integer id) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            Category category = categoryRepo.findById(id).orElseThrow(
+                    () -> new UnSuccessException("Can not find category by id: "+id)
+            );
+//            categoryRepo.deleteById(id);
+            category.setStatus(CategoryStaus.ACTIVE);
+            categoryRepo.saveAndFlush(category);
             response.setData("Success");
             return response;
         }catch (Exception e){

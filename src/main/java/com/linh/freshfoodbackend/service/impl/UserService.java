@@ -126,6 +126,21 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public ResponseObject<UserProfile> getProfileById(Integer id) {
+        try{
+            ResponseObject<UserProfile> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            // Get current Login user
+            User currentUser = userRepo.findById(id).get();
+            Address address = currentUser.getAddress();
+            response.setData(UserMapper.mapEntityToDto(currentUser, address));
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
     public User getCurrentLoginUser() {
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         return userRepo.findByEmail( ((CustomUserPrincipal) authentication.getPrincipal()).getUsername() );
@@ -136,6 +151,34 @@ public class UserService implements IUserService {
         try {
             ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
             User currentUser = this.getCurrentLoginUser();
+            // Update User
+            currentUser.setFirstName(profile.getFirstName());
+            currentUser.setLastName(profile.getLastName());
+            currentUser.setUsername(profile.getUsername());
+            currentUser.setEmail(profile.getEmail());
+            currentUser.setPhoneNumber(profile.getPhoneNumber());
+            currentUser.setUpdateTime(new Date());
+            userRepo.saveAndFlush(currentUser);
+            // Update address
+            Address address = currentUser.getAddress();
+            address.setCountryId(profile.getCountryId());
+            address.setCityId(profile.getCityId());
+            address.setFullAddress(profile.getFullAddress());
+            address.setUpdateTime(new Date());
+            addressRepo.saveAndFlush(address);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> updateById(UserProfile profile) {
+        try {
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User currentUser = userRepo.findById(profile.getId()).get();
             // Update User
             currentUser.setFirstName(profile.getFirstName());
             currentUser.setLastName(profile.getLastName());
@@ -228,7 +271,7 @@ public class UserService implements IUserService {
     public User findById(Integer id) {
         try{
             return userRepo.findById(id).orElseThrow(
-                    () -> new UnSuccessException("Can not find User B Id : "+id)
+                    () -> new UnSuccessException("Can not find User By Id : "+id)
             );
         }catch (Exception e){
             e.printStackTrace();
@@ -244,6 +287,23 @@ public class UserService implements IUserService {
                     () -> new UnSuccessException("Can not find user by id: "+id)
             );
             user.setStatus(UserStatus.DELETED);
+            userRepo.saveAndFlush(user);
+            response.setData("Success");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> restore(Integer id) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User user = userRepo.findById(id).orElseThrow(
+                    () -> new UnSuccessException("Can not find user by id: "+id)
+            );
+            user.setStatus(UserStatus.ACTIVE);
             userRepo.saveAndFlush(user);
             response.setData("Success");
             return response;

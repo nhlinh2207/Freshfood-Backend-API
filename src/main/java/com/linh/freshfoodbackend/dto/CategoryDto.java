@@ -12,4 +12,5 @@ public class CategoryDto {
     private Integer id;
     private String description;
     private String name;
+    private String status;
 }

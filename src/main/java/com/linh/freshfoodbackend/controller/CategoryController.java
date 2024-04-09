@@ -32,4 +32,9 @@ public class CategoryController {
     public ResponseEntity<?> delete(@RequestParam(name = "id") Integer id){
         return ResponseEntity.ok(categoryService.delete(id));
     }
+
+    @GetMapping(path = "/restore")
+    public ResponseEntity<?> restore(@RequestParam(name = "id") Integer id){
+        return ResponseEntity.ok(categoryService.restore(id));
+    }
 }

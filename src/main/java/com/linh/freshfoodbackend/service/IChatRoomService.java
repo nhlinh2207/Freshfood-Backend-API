@@ -13,7 +13,7 @@ public interface IChatRoomService {
 
     ChatRoom save(ChatRoom chatRoom);
     List<ChatRoom> findAll();
-    ResponseObject<ChatRoom> findByUser();
+    ResponseObject<ChatRoomDto> findByUser();
     ResponseObject<List<ChatRoomDto>> findByAdmin();
     ChatRoom findById(Integer id);
     ChatRoom join(Integer chatRoomId, ConnectedUser user);

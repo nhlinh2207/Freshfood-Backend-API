@@ -12,6 +12,8 @@ import com.linh.freshfoodbackend.service.ITokenDeviceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @AllArgsConstructor
 public class TokenDeviceService implements ITokenDeviceService {
@@ -28,6 +30,7 @@ public class TokenDeviceService implements ITokenDeviceService {
             tokenDevice.setWebToken(convertToken(tokenDeviceDto.getWebToken()));
             tokenDevice.setIosToken(convertToken(tokenDeviceDto.getIosToken()));
             tokenDevice.setAndroidToken(convertToken(tokenDeviceDto.getAndroidToken()));
+            tokenDevice.setUpdateTime(new Date());
             tokenDeviceRepo.saveAndFlush(tokenDevice);
             response.setData("Success");
             return response;

@@ -10,8 +10,7 @@ public interface ICategoryService {
 
     ResponseObject<String> create(CreateCategoryReq req);
     ResponseObject<List<CategoryDto>> getAll();
-
     ResponseObject<String> update(CreateCategoryReq req);
-
     ResponseObject<String> delete(Integer id);
+    ResponseObject<String> restore(Integer id);
 }

@@ -67,6 +67,7 @@ public class UserController {
             ArrayList<GrantedAuthority> role = new ArrayList<>(userDetails.getAuthorities());
             ResponseObject<?> res = subscriberNull(user, userDetails, access_token, role);
             // Update FCM Token
+            System.out.println("token : "+req.getFcmWebToken());
             tokenDeviceService.update(
                     TokenDeviceDto.builder().webToken(req.getFcmWebToken()).build(),
                     user
@@ -84,10 +85,22 @@ public class UserController {
          return ResponseEntity.ok(userService.getProfile());
     }
 
+    @GetMapping(path = "/findById")
+    public ResponseEntity<?> findById(@RequestParam Integer id){
+        log.info("find user by id : "+ id);
+        return ResponseEntity.ok(userService.getProfileById(id));
+    }
+
     @PutMapping(path = "/getProfile/update")
     public ResponseEntity<?> updateProfile(@RequestBody UserProfile newProfile){
         log.info("Update current login user profile");
         return ResponseEntity.ok(userService.updateProfile(newProfile));
+    }
+
+    @PutMapping(path = "/updateById")
+    public ResponseEntity<?> updateById(@RequestBody UserProfile newProfile){
+        log.info("Update current login user profile");
+        return ResponseEntity.ok(userService.updateById(newProfile));
     }
 
     private void authenticate(String email, String password) {
@@ -162,6 +175,12 @@ public class UserController {
     @DeleteMapping(path = "/delete")
     public ResponseEntity<?> delete(@RequestParam(name = "id") Integer id){
         return ResponseEntity.ok(userService.delete(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping(path = "/restore")
+    public ResponseEntity<?> restore(@RequestParam(name = "id") Integer id){
+        return ResponseEntity.ok(userService.restore(id));
     }
 
     @PutMapping(path = "/changeCurrentPassword")
