@@ -14,7 +14,7 @@ public class FilterConfig {
                 = new FilterRegistrationBean<>();
 
         loggingFilerRegistry.setFilter(new HospitalFilter());
-        loggingFilerRegistry.addUrlPatterns("/test");
+        loggingFilerRegistry.addUrlPatterns("/test/*");
         return loggingFilerRegistry;
     }
 
