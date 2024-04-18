@@ -33,6 +33,12 @@ spring:
           starttls:
             enable: true
 
+  redis:
+    host: 192.168.25.129
+    port: 6379
+  cache:
+    type: redis
+
 jwt:
   secret: nguyenhoailinh22072001
 

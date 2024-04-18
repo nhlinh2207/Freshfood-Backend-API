@@ -65,7 +65,7 @@ public class UserController {
             final CustomUserPrincipal userDetails = jwtUserDetailsService.loadUserByUsername(user.getEmail());
             final String access_token = jwtTokenUtil.generateToken(userDetails);
             ArrayList<GrantedAuthority> role = new ArrayList<>(userDetails.getAuthorities());
-            ResponseObject<?> res = subscriberNull(user, userDetails, access_token, role);
+            ResponseObject<?> res = subscriberNull(user, access_token, role);
             // Update FCM Token
             System.out.println("token : "+req.getFcmWebToken());
             tokenDeviceService.update(
@@ -91,6 +91,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getProfileById(id));
     }
 
+    @GetMapping(path = "/test")
+    public ResponseObject<UserProfile> test(@RequestParam Integer id){
+        return userService.getProfileById(id);
+    }
+
     @PutMapping(path = "/getProfile/update")
     public ResponseEntity<?> updateProfile(@RequestBody UserProfile newProfile){
         log.info("Update current login user profile");
@@ -108,7 +113,7 @@ public class UserController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
     }
 
-    private ResponseObject<?> subscriberNull(User user, CustomUserPrincipal userDetails, String access_token, ArrayList<GrantedAuthority> role) {
+    private ResponseObject<?> subscriberNull(User user, String access_token, ArrayList<GrantedAuthority> role) {
         ResponseObject<NullJwt> res = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
         log.info("abc login");
         NullJwt nullJwt = NullJwt.builder()

@@ -29,7 +29,7 @@ public class JwtUserDetailsService extends User implements UserDetailsService {
     public CustomUserPrincipal loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = this.userRepo.findByEmail(email);
         if (user != null) {
-            log.info("login loadUserByEmail : ", user.getEmail());
+            log.info("login loadUserByEmail : "+ user.getEmail());
             return new CustomUserPrincipal(user, user.getPassword(), user.getIsActive(), true, true, true, this.getAuthority(user));
         } else {
             throw new UsernameNotFoundException("user not found with email = " + email);

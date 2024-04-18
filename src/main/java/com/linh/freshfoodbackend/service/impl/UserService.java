@@ -22,6 +22,7 @@ import com.linh.freshfoodbackend.utils.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -126,8 +127,10 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Cacheable(value = "userCache", key = "#id")
     public ResponseObject<UserProfile> getProfileById(Integer id) {
         try{
+            log.info("find user by id : "+ id);
             ResponseObject<UserProfile> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
             // Get current Login user
             User currentUser = userRepo.findById(id).get();

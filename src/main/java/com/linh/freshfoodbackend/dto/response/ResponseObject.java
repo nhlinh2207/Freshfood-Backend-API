@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Data
 @Getter
 @Setter
@@ -12,6 +14,11 @@ public class ResponseObject<T> {
     private Integer code;
     private String message;
     private T data;
+
+   // Use for Redis Cache
+    public ResponseObject(){
+        super();
+    }
 
     public ResponseObject(Boolean result, ResponseStatus status) {
         this.result = result;
