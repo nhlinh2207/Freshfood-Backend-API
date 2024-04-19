@@ -1,4 +1,6 @@
 package com.linh.freshfoodbackend.service;
 
-public interface IAddressService {
+import com.linh.freshfoodbackend.entity.Address;
+
+public interface IAddressService extends BaseService<Address>{
 }
