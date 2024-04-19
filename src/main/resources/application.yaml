@@ -12,9 +12,9 @@ spring:
         format_sql: false
         dialect: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    url: jdbc:mysql://localhost:3306/freshfoodBackend?createDatabaseIfNotExist=true&autoReconnect=true&userSSL=false&useUnicode=true&characterEncoding=utf-8
-    username: root
-    password: fireice22072001
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/freshfoodBackend?createDatabaseIfNotExist=true&autoReconnect=true&userSSL=false&useUnicode=true&characterEncoding=utf-8
+    username: ${DB_USER:root}
+    password: ${DB_PASS:fireice22072001}
     #    url: jdbc:mariadb://ssa-db-container:3306/csignv2?createDatabaseIfNotExist=true&autoReconnect=true&userSSL=false&useUnicode=true&characterEncoding=utf-8
     #    username: linh
     #    password: linh2
@@ -34,8 +34,8 @@ spring:
             enable: true
 
   redis:
-    host: 192.168.25.129
-    port: 6379
+    host: ${REDIS_HOST:192.168.25.129}
+    port: ${REDIS_PORT:6379}
   cache:
     type: redis
 
