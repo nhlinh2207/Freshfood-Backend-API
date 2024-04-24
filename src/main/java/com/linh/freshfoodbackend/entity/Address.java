@@ -1,6 +1,7 @@
 package com.linh.freshfoodbackend.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.linh.freshfoodbackend.annotation.Backup;
 import com.linh.freshfoodbackend.utils.CustomDateSerializer;
 import com.linh.freshfoodbackend.utils.enums.AddressType;
 import lombok.*;
@@ -22,21 +23,27 @@ public class Address {
     @Column(name = "Id")
     private Integer id;
 
+    @Backup
     @Column(name = "Commune")
     private String commune;
 
+    @Backup
     @Column(name = "District")
     private String district;
 
+    @Backup
     @Column(name = "CityId")
     private Integer cityId;
 
+    @Backup
     @Column(name = "CCountryId")
     private Integer countryId;
 
+    @Backup
     @Column(name = "FullAddress")
     private String fullAddress;
 
+    @Backup
     @Column(name = "Type")
     @Enumerated(EnumType.STRING)
     private AddressType type;

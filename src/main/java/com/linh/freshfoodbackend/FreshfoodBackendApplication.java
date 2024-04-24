@@ -1,5 +1,6 @@
 package com.linh.freshfoodbackend;
 
+import com.linh.freshfoodbackend.utils.AsyncUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,6 +13,9 @@ public class FreshfoodBackendApplication implements CommandLineRunner {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private AsyncUtils asyncUtils;
 
     public static void main(String[] args) {
         SpringApplication.run(FreshfoodBackendApplication.class, args);
@@ -42,5 +46,8 @@ public class FreshfoodBackendApplication implements CommandLineRunner {
 //        //  Print Again
 //        System.out.println(redisTemplate.opsForHash().values("user"));
 
+        // Test Async
+//        asyncUtils.test().thenAccept(System.out::println);
+//        System.out.println("Main task complete");
     }
 }

@@ -1,9 +1,12 @@
 package com.linh.freshfoodbackend.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.linh.freshfoodbackend.dto.AddressDto;
+import com.linh.freshfoodbackend.dto.CountryDto;
 import com.linh.freshfoodbackend.dto.mapper.MapperUtils;
 import com.linh.freshfoodbackend.entity.Address;
+import com.linh.freshfoodbackend.entity.Country;
 import com.linh.freshfoodbackend.service.IAddressService;
 import com.linh.freshfoodbackend.service.ICityService;
 import com.linh.freshfoodbackend.service.ICountryService;
@@ -63,7 +66,7 @@ public class AddressController {
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<String> update(@RequestParam Integer id, @RequestBody AddressDto request) throws NotFoundException {
+    public ResponseEntity<String> update(@RequestParam Integer id, @RequestBody AddressDto request) throws NotFoundException, JsonProcessingException, IllegalAccessException {
         addressService.update(id, MapperUtils.map(request, Address.class));
         return ResponseEntity.ok("Success, Updated address by Id: "+id);
     }

@@ -1,5 +1,6 @@
 package com.linh.freshfoodbackend.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.linh.freshfoodbackend.dto.mapper.MapperUtils;
 import com.linh.freshfoodbackend.repository.BaseRepo;
 import com.linh.freshfoodbackend.service.BaseService;
@@ -34,7 +35,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
-    public void update(Integer id, T t) throws NotFoundException{
+    public void update(Integer id, T t) throws NotFoundException, JsonProcessingException, IllegalAccessException {
         T old = findById(id);
         MapperUtils.map(t, old);
         getBaseRepository().saveAndFlush(old);
