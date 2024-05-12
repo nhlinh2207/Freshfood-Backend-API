@@ -28,11 +28,15 @@ public class MyRedisConfig {
     @Value("${spring.redis.port}")
     private Integer redisPort;
 
+    @Value("${spring.redis.password}")
+    private String redisPass;
+
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(redisHost);
         configuration.setPort(redisPort);
+        configuration.setPassword(redisPass);
         return new JedisConnectionFactory(configuration);
     }
 
@@ -69,6 +73,13 @@ public class MyRedisConfig {
                         "userCache",
                         RedisCacheConfiguration
                                 .defaultCacheConfig().entryTtl(Duration.ofMinutes(10))
+                                .disableCachingNullValues()
+                                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                )
+                .withCacheConfiguration(
+                        "emchCache",
+                        RedisCacheConfiguration
+                                .defaultCacheConfig().entryTtl(Duration.ofSeconds(30))
                                 .disableCachingNullValues()
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                 );
