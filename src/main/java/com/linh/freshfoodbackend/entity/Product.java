@@ -5,6 +5,7 @@ import com.linh.freshfoodbackend.utils.CustomDateSerializer;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -57,11 +58,11 @@ public class Product {
 
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "CreateTime")
-    private Date createTime;
+    private ZonedDateTime createTime;
 
     @JsonSerialize(using = CustomDateSerializer.class)
     @Column(name = "UpdateTime")
-    private Date updateTime;
+    private ZonedDateTime updateTime;
 
     @ManyToOne
     @JoinColumn(name = "CategoryId")

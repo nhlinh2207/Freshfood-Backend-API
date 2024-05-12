@@ -3,6 +3,7 @@ package com.linh.freshfoodbackend.dto.mapper;
 import com.linh.freshfoodbackend.dto.ProductDto;
 import com.linh.freshfoodbackend.entity.Product;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class ProductMapper {
@@ -18,6 +19,8 @@ public class ProductMapper {
                 .extraImage1(product.getExtra_img1())
                 .extraImage2(product.getExtra_img2())
                 .categoryId(product.getCategory().getId())
+                .createTime(product.getCreateTime())
+                .updateTime(product.getUpdateTime())
                 .build();
     }
 
@@ -31,8 +34,8 @@ public class ProductMapper {
                 .extra_img1(productDto.getExtraImage1())
                 .extra_img2(productDto.getExtraImage2())
                 .buyingCount(0)
-                .createTime(new Date())
-                .updateTime(new Date())
+                .createTime(ZonedDateTime.now())
+                .updateTime(ZonedDateTime.now())
                 .build();
     }
 }

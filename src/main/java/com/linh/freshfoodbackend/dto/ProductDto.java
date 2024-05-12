@@ -2,6 +2,8 @@ package com.linh.freshfoodbackend.dto;
 
 import lombok.*;
 
+import java.time.ZonedDateTime;
+
 @Builder
 @Setter
 @Getter
@@ -18,5 +20,6 @@ public class ProductDto {
     private String extraImage1;
     private String extraImage2;
     private Integer categoryId;
-
+    private ZonedDateTime createTime;
+    private ZonedDateTime updateTime;
 }

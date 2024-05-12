@@ -61,7 +61,7 @@ public class UserController {
                 log.error("user not found");
                 throw new UnSuccessException("User not found : "+req.getEmail());
             }
-            this.authenticate(user.getEmail(), req.getPassword());
+           // this.authenticate(user.getEmail(), req.getPassword());
             final CustomUserPrincipal userDetails = jwtUserDetailsService.loadUserByUsername(user.getEmail());
             final String access_token = jwtTokenUtil.generateToken(userDetails);
             ArrayList<GrantedAuthority> role = new ArrayList<>(userDetails.getAuthorities());
@@ -115,7 +115,6 @@ public class UserController {
 
     private ResponseObject<?> subscriberNull(User user, String access_token, ArrayList<GrantedAuthority> role) {
         ResponseObject<NullJwt> res = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
-        log.info("abc login");
         NullJwt nullJwt = NullJwt.builder()
                 .username(user.getUsername())
                 .fullName(user.getFullName())
