@@ -6,4 +6,4 @@ EXPOSE 8080
 
 # Build jar : mvn clean package -DskipTests=true
 # docker build -t nhlinh2207/freshfoodbackend:1 .
-# docker run -p 8080:8080 -e DB_HOST=192.168.25.129 -e DB_USER=root -e DB_PASS=root freshfoodbackend:1
+# docker run -p 8080:8080 -e DB_HOST=192.168.25.129 -e DB_USER=root -e DB_PASS=root nhlinh2207/freshfoodbackend:1
