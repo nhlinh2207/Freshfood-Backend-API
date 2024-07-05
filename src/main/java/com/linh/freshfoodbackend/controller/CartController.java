@@ -1,8 +1,7 @@
 package com.linh.freshfoodbackend.controller;
 
+import com.linh.freshfoodbackend.config.kafka.OrderPublisher;
 import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
-import com.linh.freshfoodbackend.dto.response.ResponseObject;
-import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.service.ICartService;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 @RestController
 @RequestMapping(path = "/cart")
@@ -19,10 +17,12 @@ import java.util.Date;
 public class CartController {
 
     private final ICartService cartService;
+    private final OrderPublisher orderPublisher;
 
     @PostMapping(path = "/create")
     public ResponseEntity<?> create(@RequestBody OrderReq req){
-        return ResponseEntity.ok(cartService.createOrder(req));
+//        return ResponseEntity.ok(cartService.createOrder(req));
+       return ResponseEntity.ok(orderPublisher.publishOrderMessage(req));
     }
 
     @PostMapping(path = "/zaloPay/create")

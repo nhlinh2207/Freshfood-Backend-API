@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface ICartService {
 
     ResponseObject<String> createOrder(OrderReq req);
+    ResponseObject<String> createOrderFromKafka(OrderReq req);
     ResponseObject<PaginationResponse<Object>> findByUser(Integer page, String fromOrderTime, String toOrderTime);
     ResponseObject<PaginationResponse<Object>> findByStaff(Integer page, String fromOrderTime, String toOrderTime);
     ResponseObject<String> delete(Integer cartId);

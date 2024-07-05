@@ -30,11 +30,9 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
-import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -71,6 +69,60 @@ public class CartService implements ICartService {
         try{
             ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
             User currentUser = userService.getCurrentLoginUser();
+
+            // Create delivery address
+            Address deliveryAddress = Address.builder()
+                    .countryId(req.getCountryId())
+                    .cityId(req.getCityId())
+                    .fullAddress(req.getFullAddress())
+                    .type(AddressType.DELIVERY)
+                    .createTime(new Date())
+                    .updateTime(new Date())
+                    .build();
+
+            // Save Order
+            Cart cart = Cart.builder()
+                    .address(deliveryAddress)
+                    .orderTime(new Date())
+                    .status(OrderStatus.UNSENT)
+                    .paymentType(PaymentType.OFFLINE)
+                    .isPaid(false)
+                    .receiverEmail(req.getEmail())
+                    .receiverName(req.getFullName())
+                    .totalPrice(req.getCartItems().stream().mapToInt(CartItemReq::getSum).sum())
+                    .receiverPhoneNumber(req.getPhoneNumber())
+                    .user(currentUser)
+                    .build();
+
+            deliveryAddress.setCart(cart);
+            cart = cartRepo.saveAndFlush(cart);
+
+            // Save cartItem
+            for (CartItemReq item : req.getCartItems()){
+                Product product =  productRepo.findById(item.getId()).get();
+                CartItem cartItem = cartItemRepo.saveAndFlush(CartItem.builder()
+                        .cart(cart)
+                        .product(product)
+                        .quantity(item.getQty())
+                        .totalPrice(item.getSum())
+                        .createTime(new Date())
+                        .updateTime(new Date())
+                        .build());
+            }
+
+            response.setData(cart.getId()+"");
+            return response;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UnSuccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseObject<String> createOrderFromKafka(OrderReq req) {
+        try{
+            ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
+            User currentUser = userService.findByEmail(req.getCurrentUserEmail());
 
             // Create delivery address
             Address deliveryAddress = Address.builder()

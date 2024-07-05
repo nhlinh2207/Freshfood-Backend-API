@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderReq {
 
+    private String currentUserEmail;
     private String fullName;
     private String email;
     private String phoneNumber;
