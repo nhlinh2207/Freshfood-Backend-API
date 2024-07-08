@@ -42,7 +42,9 @@ spring:
 
   kafka:
     bootstrap-servers: 192.168.25.129:9092
-    topic: order_topic
+    topic:
+       order_topic: order_topic
+       rating_topic: rating_topic
 #    message_topic: message-topic
 #    dead_letter_topic: retry-topic
     producer:

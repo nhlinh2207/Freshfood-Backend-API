@@ -1,7 +1,6 @@
 package com.linh.freshfoodbackend.config.kafka;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
+import com.linh.freshfoodbackend.dto.RankDto;
 import com.linh.freshfoodbackend.dto.response.ResponseObject;
 import com.linh.freshfoodbackend.dto.response.ResponseStatus;
 import com.linh.freshfoodbackend.exception.UnSuccessException;
@@ -22,24 +21,24 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class OrderPublisher {
+public class RatingPublisher {
 
-    @Value(value = "${spring.kafka.topic.order_topic}")
+    @Value(value = "${spring.kafka.topic.rating_topic}")
     private String topic;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final IUserService userService;
 
-    public ResponseObject<String> publishOrderMessage(OrderReq req){
+    public ResponseObject<String> publicRatingCreateMessage(RankDto req){
         try{
-            req.setCurrentUserEmail(userService.getCurrentLoginUser().getEmail());
+            req.setSenderEmail(userService.getCurrentLoginUser().getEmail());
             ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
             String[] result = {"Success"};
             String payload = JsonBuilder.parseString(req);
             Message<String> message = MessageBuilder
                     .withPayload(payload)
-                    .setHeader(KafkaHeaders.MESSAGE_KEY, "LINH_MESSAGE_KEY")
-                    .setHeader("LINH", "LINH_TEST_HEADER")
+                    .setHeader(KafkaHeaders.MESSAGE_KEY, "RATING_CREATE_HEADER_1")
+                    .setHeader("LINH", "RATING_CREATE_HEADER_2")
                     .setHeader(KafkaHeaders.TOPIC, topic)
                     .build();
 

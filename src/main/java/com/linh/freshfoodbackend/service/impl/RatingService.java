@@ -28,7 +28,8 @@ public class RatingService implements IRatingService {
     public ResponseObject<String> create(RankDto req) {
         try {
             ResponseObject<String> response = new ResponseObject<>(true, ResponseStatus.DO_SERVICE_SUCCESSFUL);
-            User currentUser = userService.getCurrentLoginUser();
+//            User currentUser = userService.getCurrentLoginUser();
+            User currentUser = userService.findByEmail(req.getSenderEmail());
             Product product = productRepo.findById(req.getProductId()).get();
             Rank rank = Rank.builder()
                     .rankContent(req.getRankContent())
@@ -59,5 +60,10 @@ public class RatingService implements IRatingService {
             e.printStackTrace();
             throw new UnSuccessException(e.getMessage());
         }
+    }
+
+    @Override
+    public Integer getTotalRanks() {
+        return ratingRepo.geTotalRank();
     }
 }

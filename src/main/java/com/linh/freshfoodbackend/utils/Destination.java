@@ -20,4 +20,9 @@ public class Destination {
     public static String connectedUsers(String chatRoomId) {
         return "/topic/" + chatRoomId + ".connected.users";
     }
+
+    public static String totalRanks() {
+        return "/topic/totalRanks";
+    }
+
 }

@@ -13,4 +13,5 @@ public class RankDto {
      private String rankContent;
      private Integer productId;
      private String rankCustomerName;
+     private String senderEmail;
 }

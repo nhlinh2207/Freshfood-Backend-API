@@ -1,5 +1,6 @@
 package com.linh.freshfoodbackend.controller;
 
+import com.linh.freshfoodbackend.config.kafka.RatingPublisher;
 import com.linh.freshfoodbackend.dto.RankDto;
 import com.linh.freshfoodbackend.service.IRatingService;
 import lombok.AllArgsConstructor;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.*;
 public class RatingController {
 
     private final IRatingService ratingService;
+    private final RatingPublisher ratingPublisher;
 
     @PostMapping(path = "/create")
     public ResponseEntity<?> create(@RequestBody RankDto req){
-         return ResponseEntity.ok(ratingService.create(req));
+//         return ResponseEntity.ok(ratingService.create(req));
+         return ResponseEntity.ok(ratingPublisher.publicRatingCreateMessage(req));
     }
 
     @GetMapping(path = "/getAverageValue")

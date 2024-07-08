@@ -9,4 +9,6 @@ public interface IRatingService {
 
     ResponseObject<Integer> getAverageValueOfProduct(Integer productId);
 
+    Integer getTotalRanks();
+
 }
