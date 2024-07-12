@@ -1,0 +1,323 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: "/home/pv1"  # - for Unix/Linux
+    #  path: "/run/desktop/mnt/host/c/temp/testfiles"  # Windows
+    type: DirectoryOrCreate
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0.38
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: fireice22072001
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-initdb
+              mountPath: /docker-entrypoint-initdb.d  # Đường dẫn trong container để khởi tạo db với file .sql
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql  # Trong các container mysql, folder /var/lib/mysql được dùng để lưu dữ liệu
+      volumes:
+        - name: mysql-initdb
+          configMap:
+            name: mysql-initdb-cm # Lấy dữ liệu từ ConfigMap để liên kết với folder /docker-entrypoint-initdb.d nhằm khởi tạo dữ liệu
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc  # Liên kết dữ liệu persistent storage với foler /var/lib/mysql để tránh mất dữ liệu khi 1 pod mới được khởi tạo
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-cm
+data:
+  init.sql:
+    CREATE DATABASE IF NOT EXISTS freshfoodBackend;
+    USE freshfoodBackend;
+    CREATE TABLE IF NOT EXISTS tbl_category
+    (
+    Id          int auto_increment
+    primary key,
+    Description longtext charset utf8     null,
+    Name        varchar(255) charset utf8 null,
+    Status      varchar(255)              null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_chat_message
+    (
+    Id         int auto_increment
+    primary key,
+    ChatRoomId int          null,
+    Content    varchar(255) null,
+    CreateTime datetime(6)  null,
+    FromUser   varchar(255) null,
+    SenderType varchar(255) null,
+    ToUser     varchar(255) null,
+    Username   varchar(255) null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_chatroom
+    (
+    Id             int auto_increment
+    primary key,
+    AdminId        int                   null,
+    ConnectedUsers longtext charset utf8 null,
+    UserId         int                   null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_country
+    (
+    Id   int auto_increment
+    primary key,
+    Name varchar(255) charset utf8 null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_city
+    (
+    Id        int auto_increment
+    primary key,
+    Name      varchar(255) charset utf8 null,
+    CountryId int                       null,
+    constraint FKomyxp03a3ypf14s7gkalbk070
+    foreign key (CountryId) references tbl_country (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_permission
+    (
+    Id         int auto_increment
+    primary key,
+    ActionCode varchar(255) not null,
+    ActionName varchar(255) not null,
+    constraint UK_h542mcbx981diaey6t2byt7bg
+    unique (ActionName),
+    constraint UK_lqurfmd8c051xm6760swf4upp
+    unique (ActionCode)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_product
+    (
+    Id          int auto_increment
+    primary key,
+    BuyingCount int                       null,
+    CreateTime  datetime(6)               null,
+    Description longtext charset utf8     null,
+    Discount    int                       null,
+    ExtraImage1 longtext charset utf8     null,
+    ExtraImage2 longtext charset utf8     null,
+    Image       longtext charset utf8     null,
+    Name        varchar(255) charset utf8 null,
+    Price       int                       null,
+    Quantity    int                       null,
+    Status      varchar(255)              null,
+    UpdateTime  datetime(6)               null,
+    CategoryId  int                       null,
+    Label       varchar(255)              null,
+    constraint FKfcjl17t8526xoyg6lxsy0i44o
+    foreign key (CategoryId) references tbl_category (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_role
+    (
+    id   int auto_increment
+    primary key,
+    Name varchar(255) null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_role_permission
+    (
+    RoleId       int not null,
+    PermissionId int not null,
+    primary key (RoleId, PermissionId),
+    constraint FK9jwh45vinrthexs7e0x6m5mui
+    foreign key (PermissionId) references tbl_permission (Id),
+    constraint FKmmeng9rt7ru3lkjo8yrljohcu
+    foreign key (RoleId) references tbl_role (id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_server_log
+    (
+    Id         int auto_increment
+    primary key,
+    Actor      varchar(255)              null,
+    Code       varchar(255)              null,
+    Content    varchar(255) charset utf8 null,
+    CreateTime datetime(6)               null,
+    Ip         varchar(255)              null,
+    OldValue   varchar(255) charset utf8 null,
+    Reason     varchar(255) charset utf8 null,
+    Type       varchar(255)              null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_user
+    (
+    Id          int auto_increment
+    primary key,
+    CreateTime  datetime(6)               null,
+    Email       varchar(255)              null,
+    FirstName   varchar(255) charset utf8 null,
+    IsActive    bit                       null,
+    LastName    varchar(255) charset utf8 null,
+    Password    varchar(255)              null,
+    PhoneNumber varchar(255)              null,
+    Status      varchar(255)              null,
+    UpdateTime  datetime(6)               null,
+    Username    varchar(255)              null
+    );
+    CREATE TABLE IF NOT EXISTS tbl_cart
+    (
+    Id                  int auto_increment
+    primary key,
+    DeliveryTime        datetime(6)  null,
+    OrderTime           datetime(6)  null,
+    ReceiverEmail       varchar(255) null,
+    ReceiverName        varchar(255) null,
+    ReceiverPhoneNumber varchar(255) null,
+    Status              varchar(255) null,
+    StaffId             int          null,
+    UserId              int          null,
+    TotalPrice          int          null,
+    IsPaid              bit          null,
+    PaymentTime         datetime(6)  null,
+    PaymentType         varchar(255) null,
+    IsDelivered         bit          null,
+    IsReceived          bit          null,
+    constraint FK3vei1kw4eb4wpr5j2qvhdoary
+    foreign key (StaffId) references tbl_user (Id),
+    constraint FKkaq4eeu6vch0xam6xupylwj9r
+    foreign key (UserId) references tbl_user (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_address
+    (
+    Id          int auto_increment
+    primary key,
+    CityId      int          null,
+    Commune     varchar(255) null,
+    CCountryId  int          null,
+    CreateTime  datetime(6)  null,
+    District    varchar(255) null,
+    FullAddress varchar(255) null,
+    Type        varchar(255) null,
+    UpdateTime  datetime(6)  null,
+    UserId      int          null,
+    CartId      int          null,
+    constraint FKd8sje9fg3it3pwgy4b3tbi4ev
+    foreign key (CartId) references tbl_cart (Id),
+    constraint FKdhyh2u8bi0i5qhfdbve7oip8h
+    foreign key (UserId) references tbl_user (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_cartitem
+    (
+    Id         int auto_increment
+    primary key,
+    CreateTime datetime(6) null,
+    Quantity   int         null,
+    TotalPrice int         null,
+    updateTime datetime(6) null,
+    CartId     int         null,
+    ProductId  int         null,
+    constraint FK15ck6iscsunfugmllbsp3gofb
+    foreign key (ProductId) references tbl_product (Id),
+    constraint FKg42h8ylp21s2k7ir6jyd8snr0
+    foreign key (CartId) references tbl_cart (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_rank
+    (
+    Id               int auto_increment
+    primary key,
+    CreateTime       datetime(6)  null,
+    RankContent      varchar(255) null,
+    RankCustomerName varchar(255) null,
+    RankNumber       int          null,
+    RankValue        varchar(255) null,
+    UpdateTime       datetime(6)  null,
+    ProductId        int          null,
+    UserId           int          null,
+    constraint FKdwkuofbjdieubjwm49pj5xv2i
+    foreign key (ProductId) references tbl_product (Id),
+    constraint FKtd3w0putead2vakkfhah9h6hq
+    foreign key (UserId) references tbl_user (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_token_device
+    (
+    id           int auto_increment
+    primary key,
+    AndroidToken varchar(255) null,
+    CreateTime   datetime(6)  null,
+    DesktopToken varchar(255) null,
+    IOSToken     varchar(255) null,
+    UpdateTime   datetime(6)  null,
+    WebToken     varchar(255) null,
+    UserId       int          null,
+    constraint FK4qjun6to9d4q6sefufb8g1sdt
+    foreign key (UserId) references tbl_user (Id)
+    );
+    CREATE TABLE IF NOT EXISTS tbl_user_role
+    (
+    UserId int not null,
+    RoleId int not null,
+    primary key (UserId, RoleId),
+    constraint FK52to6f3y19prgr8h70expcce2
+    foreign key (RoleId) references tbl_role (id),
+    constraint FKji1t9lrc1oqsqoevwepmvmrka
+    foreign key (UserId) references tbl_user (Id)
+    );
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  clusterIP: None
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306

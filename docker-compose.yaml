@@ -32,6 +32,3 @@ services:
       - '8082:80'
     volumes:
     - /home/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    environment:
-      - VUE_APP_BASE_URL=http://freshfoodbackend:8080
-      - VUE_APP_WEBSOCKET_URL=http://freshfoodbackend:8080/ws
