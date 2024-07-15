@@ -6,3 +6,13 @@ data:
   hostname: "mysql-0.mysql"
   dbuser: root
   dbpass: fireice22072001
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-cm
+data:
+  TEST_A: "http://localhost:8081/api"
+  TEST_B: "http://localhost:8081/api/ws"
