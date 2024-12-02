@@ -63,3 +63,10 @@ jwt:
 
 app:
   firebase-configuration-file: key-firebase.json
+
+  storage-minio:
+    service-url: http://192.168.25.143:9000
+    access-key: linh
+    secret-key: hZpemd2g8G7rWoGs9mOodfJclJiqzwqlvpv9gxG4
+    expired-time: 86400
+    bucket-name: linh-bucket

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linh.freshfoodbackend.config.payment.ZaloPayConfig;
 import com.linh.freshfoodbackend.dto.CartDto;
 import com.linh.freshfoodbackend.dto.JasperDto;
+import com.linh.freshfoodbackend.dto.MinioInfo;
 import com.linh.freshfoodbackend.dto.mapper.CartMapper;
 import com.linh.freshfoodbackend.dto.request.cart.CartItemReq;
 import com.linh.freshfoodbackend.dto.request.cart.OrderReq;
@@ -17,6 +18,7 @@ import com.linh.freshfoodbackend.repository.ICartRepo;
 import com.linh.freshfoodbackend.repository.IProductRepo;
 import com.linh.freshfoodbackend.service.ICartService;
 import com.linh.freshfoodbackend.service.IUserService;
+import com.linh.freshfoodbackend.service.MinIOService;
 import com.linh.freshfoodbackend.utils.HMACUtil;
 import com.linh.freshfoodbackend.utils.MoneyFormatUtil;
 import com.linh.freshfoodbackend.utils.PaginationCustom;
@@ -25,6 +27,7 @@ import com.linh.freshfoodbackend.utils.enums.DateTimeUtil;
 import com.linh.freshfoodbackend.utils.enums.OrderStatus;
 import com.linh.freshfoodbackend.utils.enums.PaymentType;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -41,28 +44,31 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartService implements ICartService {
+
+    @Value("${app.storage-minio.bucket-name}")
+    private String bucketTemp;
 
     private final ICartRepo cartRepo;
     private final ICartItemRepo cartItemRepo;
     private final IUserService userService;
     private final IProductRepo productRepo;
+    private final MinIOService minIOService;
 
     @Override
     public ResponseObject<String> createOrder(OrderReq req) {
@@ -512,8 +518,25 @@ public class CartService implements ICartService {
 //            // Export pdf
             JRPdfExporter exporter = new JRPdfExporter();
             exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
             exporter.exportReport();
+
+//            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+//            exporter.exportReport();
+
+            // Put File to Minio
+            String fileName = customer.getUsername() + "/" + new SimpleDateFormat("yyyy/MM/dd").format(new Date()) + "/" + UUID.randomUUID().toString().toUpperCase().replace("-", "") + ".pdf";
+            minIOService.saveFile(new ByteArrayInputStream(os.toByteArray()), fileName, bucketTemp, "application/pdf");
+
+            // Get File From Minio as Base64
+            MinioInfo minioInfo = MinioInfo.builder()
+                    .path(fileName)
+                    .bucketName(bucketTemp)
+                    .build();
+            String base64File = minIOService.getBase64Object(minioInfo);
+            System.out.println("Base64 PDF File : " + base64File);
 
             // Export excel
 //            JRXlsxExporter exporter2 = new JRXlsxExporter();
