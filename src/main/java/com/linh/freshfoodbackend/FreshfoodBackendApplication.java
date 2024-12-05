@@ -1,12 +1,22 @@
 package com.linh.freshfoodbackend;
 
+import com.linh.freshfoodbackend.exception.UnSuccessException;
 import com.linh.freshfoodbackend.utils.AsyncUtils;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 @SpringBootApplication
 public class FreshfoodBackendApplication implements CommandLineRunner {
@@ -24,6 +34,7 @@ public class FreshfoodBackendApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
 //        JSONObject ob1 = new JSONObject();
 //        ob1.put("id", 1);
 //        ob1.put("name", "Linh");
@@ -49,5 +60,6 @@ public class FreshfoodBackendApplication implements CommandLineRunner {
         // Test Async
 //        asyncUtils.test().thenAccept(System.out::println);
 //        System.out.println("Main task complete");
+
     }
 }

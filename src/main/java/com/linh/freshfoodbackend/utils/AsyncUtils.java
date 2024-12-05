@@ -14,6 +14,7 @@ public class AsyncUtils {
         return CompletableFuture.supplyAsync(() -> {
             try{
                 TimeUnit.SECONDS.sleep(3);
+                System.out.println(1/0);
             }catch (Exception e){
                 e.printStackTrace();
             }
